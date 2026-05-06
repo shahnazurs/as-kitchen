@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A's Kitchen · Restaurant & Café</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --cream: #F9F5EE;
+    --warm-brown: #6B4226;
+    --light-brown: #C19A6B;
+    --rust: #C0522E;
+    --sage: #7A8C6E;
+    --dark: #2C1A0E;
+    --text-mid: #5A3E2B;
+    --card-bg: #FFFDF9;
+  }
+  body { font-family: 'Lora', serif; background: var(--cream); color: var(--dark); overflow-x: hidden; }
+
+  /* NAV */
+  nav { background: var(--cream); border-bottom: 1px solid rgba(107,66,38,0.12); padding: 1rem 2.5rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--warm-brown); letter-spacing: 0.02em; }
+  .logo span { color: var(--rust); font-style: italic; }
+  nav ul { list-style: none; display: flex; gap: 2rem; }
+  nav ul li a { text-decoration: none; font-size: 0.875rem; color: var(--text-mid); letter-spacing: 0.05em; text-transform: uppercase; transition: color 0.2s; font-family: 'Lora', serif; }
+  nav ul li a:hover { color: var(--rust); }
+  .nav-reserve { background: var(--rust); color: #FFF8F0 !important; padding: 0.5rem 1.25rem; border-radius: 3px; }
+  .nav-reserve:hover { background: #A8421F; color: #FFF8F0 !important; }
+
+  /* HERO */
+  .hero { position: relative; background: var(--warm-brown); min-height: 560px; display: flex; align-items: center; overflow: hidden; }
+  .hero-pattern { position: absolute; inset: 0; background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0, rgba(255,255,255,0.03) 1px, transparent 0, transparent 50%); background-size: 20px 20px; }
+  .hero-content { position: relative; padding: 4rem 2.5rem; max-width: 560px; }
+  .hero-tag { display: inline-block; background: var(--rust); color: #F9F0E8; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.35rem 0.85rem; border-radius: 2px; margin-bottom: 1.5rem; font-family: 'Lora', serif; }
+  .hero h1 { font-family: 'Playfair Display', serif; font-size: 3.4rem; line-height: 1.12; color: #FFF8F0; margin-bottom: 1.25rem; font-weight: 600; }
+  .hero h1 em { color: var(--light-brown); font-style: italic; }
+  .hero p { font-size: 1.05rem; color: rgba(255,248,240,0.75); line-height: 1.7; margin-bottom: 2rem; }
+  .hero-meta { display: flex; gap: 2rem; margin-bottom: 2rem; }
+  .hero-meta-item { display: flex; flex-direction: column; gap: 0.2rem; }
+  .hero-meta-item span:first-child { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--light-brown); }
+  .hero-meta-item span:last-child { font-size: 0.95rem; color: rgba(255,248,240,0.85); }
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary { background: var(--rust); color: #FFF8F0; border: none; padding: 0.85rem 2rem; font-family: 'Lora', serif; font-size: 0.9rem; cursor: pointer; border-radius: 3px; letter-spacing: 0.03em; transition: background 0.2s, transform 0.1s; }
+  .btn-primary:hover { background: #A8421F; transform: translateY(-1px); }
+  .btn-outline { background: transparent; color: #FFF8F0; border: 1.5px solid rgba(255,248,240,0.45); padding: 0.85rem 2rem; font-family: 'Lora', serif; font-size: 0.9rem; cursor: pointer; border-radius: 3px; letter-spacing: 0.03em; transition: border-color 0.2s; }
+  .btn-outline:hover { border-color: rgba(255,248,240,0.8); }
+  .hero-decor { position: absolute; right: -40px; top: 50%; transform: translateY(-50%); width: 340px; height: 340px; border-radius: 50%; background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.08); }
+  .hero-decor::before { content: ''; position: absolute; inset: 30px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.06); }
+
+  /* SECTION HELPERS */
+  section { padding: 5rem 2.5rem; }
+  .section-label { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--rust); margin-bottom: 0.75rem; font-family: 'Lora', serif; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--dark); margin-bottom: 1rem; font-weight: 600; line-height: 1.2; }
+  .section-title em { font-style: italic; color: var(--warm-brown); }
+  .section-sub { font-size: 1rem; color: var(--text-mid); line-height: 1.7; max-width: 520px; margin-bottom: 3rem; }
+
+  /* ABOUT */
+  .about { background: var(--card-bg); }
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; max-width: 960px; margin: 0 auto; }
+  .about-image { aspect-ratio: 4/5; background: var(--warm-brown); border-radius: 6px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .about-image-inner { font-family: 'Playfair Display', serif; font-size: 6rem; color: rgba(255,248,240,0.15); font-style: italic; user-select: none; }
+  .about-image::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 40%; background: linear-gradient(to top, rgba(107,66,38,0.5), transparent); }
+  .values { display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem; }
+  .value-item { display: flex; align-items: flex-start; gap: 0.75rem; }
+  .value-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--rust); margin-top: 0.45rem; flex-shrink: 0; }
+  .value-text { font-size: 0.95rem; color: var(--text-mid); line-height: 1.5; }
+  .value-text strong { color: var(--dark); font-weight: 500; }
+
+  /* MENU */
+  .menu { background: var(--cream); }
+  .menu-tabs { display: flex; gap: 0; border-bottom: 1px solid rgba(107,66,38,0.15); margin-bottom: 2.5rem; max-width: 960px; margin-left: auto; margin-right: auto; }
+  .menu-tab { padding: 0.75rem 1.5rem; font-family: 'Lora', serif; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; border: none; background: none; color: var(--text-mid); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.2s, border-color 0.2s; }
+  .menu-tab.active { color: var(--rust); border-bottom-color: var(--rust); }
+  .menu-section { display: none; max-width: 960px; margin: 0 auto; }
+  .menu-section.active { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(107,66,38,0.08); border: 1px solid rgba(107,66,38,0.08); border-radius: 6px; overflow: hidden; }
+  .menu-item { background: var(--card-bg); padding: 1.5rem 1.75rem; display: flex; justify-content: space-between; align-items: start; gap: 1rem; }
+  .menu-item-info h4 { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--dark); margin-bottom: 0.3rem; font-weight: 600; }
+  .menu-item-info p { font-size: 0.82rem; color: var(--text-mid); line-height: 1.5; }
+  .menu-item-price { font-size: 0.9rem; color: var(--rust); white-space: nowrap; font-weight: 500; margin-top: 0.1rem; }
+  .menu-tag { display: inline-block; background: rgba(122,140,110,0.15); color: var(--sage); font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 2px; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 0.4rem; }
+
+  /* HOURS & LOCATION */
+  .info { background: var(--warm-brown); }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; max-width: 960px; margin: 0 auto; }
+  .info-card { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; padding: 1.75rem; }
+  .info-card h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: #FFF8F0; margin-bottom: 1.25rem; }
+  .info-row { display: flex; justify-content: space-between; margin-bottom: 0.6rem; }
+  .info-row span:first-child { font-size: 0.85rem; color: rgba(255,248,240,0.6); }
+  .info-row span:last-child { font-size: 0.85rem; color: rgba(255,248,240,0.9); font-weight: 500; }
+  .info-address { font-size: 0.9rem; color: rgba(255,248,240,0.8); line-height: 1.7; }
+  .info-address strong { color: #FFF8F0; display: block; margin-bottom: 0.4rem; }
+
+  /* TESTIMONIALS */
+  .testimonials { background: var(--card-bg); }
+  .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 960px; margin: 0 auto; }
+  .testi-card { background: var(--cream); border: 1px solid rgba(107,66,38,0.1); border-radius: 6px; padding: 1.75rem; }
+  .testi-card .stars { color: var(--rust); font-size: 0.9rem; margin-bottom: 1rem; letter-spacing: 2px; }
+  .testi-card p { font-size: 0.9rem; color: var(--text-mid); line-height: 1.7; font-style: italic; margin-bottom: 1.25rem; }
+  .testi-card .name { font-size: 0.78rem; color: var(--light-brown); letter-spacing: 0.08em; text-transform: uppercase; }
+
+  /* RESERVATION */
+  .reservation { background: var(--cream); }
+  .reservation-inner { max-width: 620px; margin: 0 auto; text-align: center; }
+  .reservation-inner .section-sub { margin: 0 auto 2.5rem; }
+  .res-form { display: flex; flex-direction: column; gap: 1rem; text-align: left; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-group label { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-mid); }
+  .form-group input, .form-group select, .form-group textarea { border: 1px solid rgba(107,66,38,0.2); border-radius: 4px; padding: 0.75rem 1rem; font-family: 'Lora', serif; font-size: 0.9rem; background: #FFFDF9; color: var(--dark); outline: none; transition: border-color 0.2s; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--rust); }
+  .form-group textarea { resize: vertical; min-height: 90px; }
+  .form-submit .btn-primary { width: 100%; padding: 1rem; font-size: 0.95rem; margin-top: 0.5rem; }
+
+  /* FOOTER */
+  footer { background: var(--dark); padding: 3rem 2.5rem 2rem; text-align: center; }
+  footer .logo { display: block; margin-bottom: 1rem; color: #FFF8F0; }
+  footer .logo span { color: var(--light-brown); }
+  footer p { font-size: 0.825rem; color: rgba(255,248,240,0.45); line-height: 1.7; }
+  footer .footer-links { display: flex; justify-content: center; gap: 2rem; margin: 1.5rem 0; list-style: none; }
+  footer .footer-links a { font-size: 0.8rem; color: rgba(255,248,240,0.55); text-decoration: none; letter-spacing: 0.06em; text-transform: uppercase; transition: color 0.2s; }
+  footer .footer-links a:hover { color: var(--light-brown); }
+  footer .divider { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 1.5rem 0; }
+
+  @media (max-width: 700px) {
+    .about-grid, .info-grid, .testi-grid, .form-row, .menu-section.active { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 2.4rem; }
+    .hero-decor { display: none; }
+    nav ul { gap: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><span>A's</span> Kitchen</div>
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#info">Visit</a></li>
+    <li><a href="#reserve" class="nav-reserve">Reserve</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-pattern"></div>
+  <div class="hero-content">
+    <span class="hero-tag">Restaurant &amp; Café · Est. 2019</span>
+    <h1>Where every meal feels <em>like home</em></h1>
+    <p>A neighbourhood café and restaurant rooted in seasonal cooking, warm hospitality, and the kind of food that makes you stay a little longer.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span>Hours</span>
+        <span>Tue–Sun, 8am–10pm</span>
+      </div>
+      <div class="hero-meta-item">
+        <span>Location</span>
+        <span>123 Maple Street</span>
+      </div>
+    </div>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="document.getElementById('reserve').scrollIntoView({behavior:'smooth'})">Reserve a Table</button>
+      <button class="btn-outline" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">View Menu</button>
+    </div>
+  </div>
+  <div class="hero-decor"></div>
+</section>
+
+<section class="about" id="about">
+  <div class="about-grid">
+    <div class="about-image"><div class="about-image-inner">A</div></div>
+    <div class="about-text">
+      <p class="section-label">Our Story</p>
+      <h2 class="section-title">A neighbourhood spot with a <em>soulful kitchen</em></h2>
+      <p class="section-sub">A's Kitchen started as a dream to create a place where people actually want to linger — over a good coffee, a long lunch, or a dinner worth remembering. We cook seasonally, source locally, and welcome everyone like a regular.</p>
+      <div class="values">
+        <div class="value-item"><div class="value-dot"></div><p class="value-text"><strong>Seasonal menu</strong> — our dishes change with the market, not a corporate calendar.</p></div>
+        <div class="value-item"><div class="value-dot"></div><p class="value-text"><strong>Local suppliers</strong> — we partner with farms within 50 miles to keep it fresh and community-rooted.</p></div>
+        <div class="value-item"><div class="value-dot"></div><p class="value-text"><strong>Always welcoming</strong> — whether it's your first coffee or your hundredth dinner, you belong here.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="menu" id="menu">
+  <div style="text-align:center; margin-bottom: 2rem;">
+    <p class="section-label">What We Serve</p>
+    <h2 class="section-title">A menu made to <em>linger over</em></h2>
+  </div>
+  <div class="menu-tabs" id="menuTabs">
+    <button class="menu-tab active" data-tab="breakfast">Breakfast &amp; Café</button>
+    <button class="menu-tab" data-tab="lunch">Lunch</button>
+    <button class="menu-tab" data-tab="dinner">Dinner</button>
+    <button class="menu-tab" data-tab="drinks">Drinks</button>
+  </div>
+
+  <div class="menu-section active" id="tab-breakfast">
+    <div class="menu-item"><div class="menu-item-info"><h4>Soft scrambled eggs</h4><p>House sourdough, cultured butter, chives</p><span class="menu-tag">Vegetarian</span></div><span class="menu-item-price">$14</span></div>
+    <div class="menu-item"><div class="menu-item-info"><h4>Ricotta hotcakes</h4><p>Seasonal fruit compote, whipped cream, maple</p><span class="menu-tag">Vegetarian</span></div><span class="menu-item-price">$16</span></div>
+    <div class="menu-item"><div class="menu-item-info"><h4>Avocado toast</h4><p>Heirloom tomatoes, dukkah, poached egg, levain</p><span class="menu-tag">Vegetarian</span></div><span class="menu-item-price">$17</span></div>
+    <div class="menu-item"><div class="menu-item-info"><h4>Morning bowl</h4><p>Granola, seasonal fruits, yogurt, honey</p><span class="menu-tag">GF option</span></div><span class="menu-item-price">$13</span></div>
+    <div class="menu-item"><div class="menu-item-info"><h4>Smoked salmon bagel</h4><p>Cream cheese, capers, red onion, dill</p></div><span class="menu-item-price">$18</span></div>
+    <div class="menu-item"><div class="menu-item-info"><h4>Pastry basket</h4><p>Chef's daily selection of house-baked pastries</p><span class="menu-tag">Vegetarian</span></div><span class="menu-item-price">$11</span></div>
+  </div>
+
+  <div class="menu-section" id="tab-lunch">
+    <div class="menu-item"><div class="menu-item-info"><h4>Roasted tomato soup</h4><p>Basil oil, crème fraîche, grilled sourdough</p><span class="menu-tag">Vegetarian</span></div><span class="menu-item-price">$14</span></div>
+    <div class="menu-item"><div class="menu-item-info"><h4>A's kitchen burger</h4><p>Grass-fed beef, aged cheddar, lettuce, aioli, brioche bun</p></div><span class="menu-item-price">$22</span></div>
+    <div class="menu-item"><div class="menu-item-info"><h4>Seasonal grain bowl</h4><p>Roasted veg, tahini dressing, herbs, seeds</p><span class="menu-tag">Vegan</span></div><span class="menu-item-price">$19</span></div>
+    <div class="menu-item"><div class="menu-item-info"><h4>Croque monsieur</h4><p>Ham, Gruyère béchamel, mustard, fries</p></div><span class="menu-item-price">$20</span></div>
+    <div class="menu-item"><div class="menu-item-info"><h4>Niçoise salad</h4><p>Seared tuna, green beans, olives, soft egg</p><span class="menu-tag">GF</span></div><span class="menu-item-price">$23</span></div>
+    <div class="menu-item"><div class="menu-item-info"><h4>Soup of the day</h4><p>Ask your server — changes daily with the market</p></div><span class="menu-item-price">$12</span></div>
+  </div>
+
+  <div class="menu-section" id="tab-dinner">
+    <div class="menu-item"><div class="menu-item-info"><h4>Pan-seared duck breast</h4><p>Cherry jus, roasted parsnip, wilted greens</p></div><span class="menu-item-price">$38</span></div>
+    <div class="menu-item"><div class="menu-item-info"><h4>Ricotta gnocchi</h4><p>Brown butter, sage, toasted walnuts, Parmesan</p><span class="menu-tag">Vegetarian</span></div><span class="menu-item-price">$29</span></div>
+    <div class="menu-item"><div class="menu-item-info"><h4>Grilled branzino</h4><p>Lemon caper butter, fennel salad, roast potatoes</p><span class="menu-tag">GF</span></div><span class="menu-item-price">$36</span></div>
+    <div class="menu-item"><div class="menu-item-info"><h4>Braised short rib</h4><p>Red wine reduction, creamy polenta, gremolata</p></div><span class="menu-item-price">$42</span></div>
+    <div class="menu-item"><div class="menu-item-info"><h4>Roasted cauliflower steak</h4><p>Romesco, smoked almonds, herb oil</p><span class="menu-tag">Vegan</span></div><span class="menu-item-price">$27</span></div>
+    <div class="menu-item"><div class="menu-item-info"><h4>Chef's tasting board</h4><p>Seasonal charcuterie, cheese, preserves, crostini</p></div><span class="menu-item-price">$28</span></div>
+  </div>
+
+  <div class="menu-section" id="tab-drinks">
+    <div class="menu-item"><div class="menu-item-info"><h4>House espresso</h4><p>Single origin, rotated monthly</p></div><span class="menu-item-price">$4</span></div>
+    <div class="menu-item"><div class="menu-item-info"><h4>Oat milk flat white</h4><p>Double shot, velvety microfoam</p><span class="menu-tag">Vegan</span></div><span class="menu-item-price">$6</span></div>
+    <div class="menu-item"><div class="menu-item-info"><h4>Seasonal spritz</h4><p>House shrub, sparkling water, fresh citrus</p><span class="menu-tag">Non-alcoholic</span></div><span class="menu-item-price">$8</span></div>
+    <div class="menu-item"><div class="menu-item-info"><h4>Natural wine (glass)</h4><p>Ask your server for today's selection</p></div><span class="menu-item-price">$14</span></div>
+    <div class="menu-item"><div class="menu-item-info"><h4>Cold brew</h4><p>18-hour steep, served over ice</p></div><span class="menu-item-price">$6</span></div>
+    <div class="menu-item"><div class="menu-item-info"><h4>House lemonade</h4><p>Fresh-pressed, rosemary &amp; honey</p><span class="menu-tag">Vegan</span></div><span class="menu-item-price">$5</span></div>
+  </div>
+</section>
+
+<section class="info" id="info">
+  <div style="text-align:center; margin-bottom: 3rem;">
+    <p class="section-label" style="color:var(--light-brown)">Find Us</p>
+    <h2 class="section-title" style="color:#FFF8F0">Come visit <em style="color:var(--light-brown)">anytime</em></h2>
+  </div>
+  <div class="info-grid">
+    <div class="info-card">
+      <h3>Hours</h3>
+      <div class="info-row"><span>Tuesday – Friday</span><span>8am – 10pm</span></div>
+      <div class="info-row"><span>Saturday</span><span>9am – 11pm</span></div>
+      <div class="info-row"><span>Sunday</span><span>9am – 4pm</span></div>
+      <div class="info-row"><span>Monday</span><span>Closed</span></div>
+    </div>
+    <div class="info-card">
+      <h3>Location</h3>
+      <p class="info-address"><strong>A's Kitchen</strong>123 Maple Street<br>Salt Lake City, UT 84101<br><br>Free parking behind the building. Walk-ins welcome, reservations recommended for dinner.</p>
+    </div>
+    <div class="info-card">
+      <h3>Contact</h3>
+      <div class="info-row"><span>Phone</span><span>(801) 555-0192</span></div>
+      <div class="info-row"><span>Email</span><span>hello@askitchen.com</span></div>
+      <div class="info-row"><span>Instagram</span><span>@askitchenslc</span></div>
+      <div style="margin-top:1.25rem; padding-top:1rem; border-top:1px solid rgba(255,255,255,0.1);">
+        <p style="font-size:0.82rem; color:rgba(255,248,240,0.55);">Private dining &amp; events available. Contact us to enquire.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials">
+  <div style="text-align:center; margin-bottom: 3rem;">
+    <p class="section-label">Guest Reviews</p>
+    <h2 class="section-title">What our guests <em>are saying</em></h2>
+  </div>
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p>"The ricotta gnocchi alone is worth the trip. Everything feels thoughtful — the food, the space, the service. Our new favourite spot in the city."</p>
+      <span class="name">— Sarah M.</span>
+    </div>
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p>"I've been coming for morning coffee for six months and the staff still remember my order. That kind of warmth is rare. The food is consistently brilliant too."</p>
+      <span class="name">— James T.</span>
+    </div>
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p>"We hosted a birthday dinner in the private area and A's team went above and beyond. The braised short rib was unforgettable. Highly recommend."</p>
+      <span class="name">— Rachel K.</span>
+    </div>
+  </div>
+</section>
+
+<section class="reservation" id="reserve">
+  <div class="reservation-inner">
+    <p class="section-label" style="text-align:center">Reservations</p>
+    <h2 class="section-title">Book your <em>table</em></h2>
+    <p class="section-sub" style="margin:0 auto 2.5rem;">We recommend reserving ahead for dinner service. Walk-ins are always welcome at the café.</p>
+    <form class="res-form" onsubmit="handleSubmit(event)">
+      <div class="form-row">
+        <div class="form-group"><label>First name</label><input type="text" placeholder="Jane" /></div>
+        <div class="form-group"><label>Last name</label><input type="text" placeholder="Smith" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Date</label><input type="date" /></div>
+        <div class="form-group"><label>Time</label>
+          <select>
+            <option>6:00 PM</option><option>6:30 PM</option><option>7:00 PM</option>
+            <option>7:30 PM</option><option>8:00 PM</option><option>8:30 PM</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Party size</label>
+          <select><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6+</option></select>
+        </div>
+        <div class="form-group"><label>Phone</label><input type="tel" placeholder="(801) 555-0100" /></div>
+      </div>
+      <div class="form-group"><label>Special requests</label><textarea placeholder="Dietary needs, celebrations, seating preferences..."></textarea></div>
+      <div class="form-submit"><button type="submit" class="btn-primary">Confirm Reservation</button></div>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="logo"><span>A's</span> Kitchen</div>
+  <ul class="footer-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#info">Visit</a></li>
+    <li><a href="#reserve">Reserve</a></li>
+  </ul>
+  <hr class="divider">
+  <p>© 2026 A's Kitchen · 123 Maple Street, Salt Lake City · Tue–Sun, 8am–10pm</p>
+</footer>
+
+<script>
+  document.querySelectorAll('.menu-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.menu-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.menu-section').forEach(s => s.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    });
+  });
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.textContent = '✓ Reservation confirmed!';
+    btn.style.background = '#7A8C6E';
+    btn.disabled = true;
+  }
+</script>
+</body>
+</html>
