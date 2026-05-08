@@ -312,17 +312,26 @@
     </div>
     <div class="ff">
       <label>Food Photo</label>
-      <div class="img-upload-zone" id="imgZone" onclick="document.getElementById('miImg').click()">
-        <input type="file" id="miImg" accept="image/*" style="display:none" onchange="handleImgUpload(event)"/>
-        <div id="imgPlaceholder">
-          <div style="font-size:2rem;margin-bottom:6px;">📷</div>
-          <div style="font-size:.85rem;color:var(--muted);font-weight:500;">Click to upload a photo</div>
-          <div style="font-size:.75rem;color:var(--muted);margin-top:4px;">JPG, PNG, WebP — max 2MB</div>
+      <div style="background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:16px;">
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;">
+          <input id="miImgPath" type="text" placeholder="e.g. chicken-biryani.jpg"
+            style="flex:1;padding:10px 13px;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.88rem;background:#fff;outline:none;transition:border-color .2s;"
+            oninput="previewImgPath(this.value)" onfocus="this.style.borderColor='var(--spice)'" onblur="this.style.borderColor='var(--border)'"/>
+          <button type="button" onclick="document.getElementById('miImgFile').click()"
+            style="padding:10px 14px;background:var(--dark);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;white-space:nowrap;transition:opacity .2s;"
+            onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">📁 Browse</button>
+          <input type="file" id="miImgFile" accept="image/*" style="display:none" onchange="handleImgFile(event)"/>
         </div>
-        <div id="imgPreviewWrap" style="display:none;">
-          <img id="imgPreview" class="img-preview" src="" alt="Preview"/>
-          <button class="img-remove" onclick="removeImg(event)" title="Remove photo">✕</button>
+        <div style="font-size:.75rem;color:var(--muted);margin-bottom:12px;line-height:1.5;">
+          📂 Place your image in the <code style="background:#fff;padding:2px 6px;border-radius:4px;font-size:.75rem;">images/</code> folder, then type the filename above.<br/>
+          Or click <strong>Browse</strong> to pick a file — it will be saved as base64 automatically.
         </div>
+        <div id="imgPreviewWrap" style="display:none;position:relative;text-align:center;">
+          <img id="imgPreview" class="img-preview" src="" alt="Preview" style="max-height:140px;border-radius:8px;object-fit:cover;width:100%;"/>
+          <button type="button" onclick="removeImg()" title="Remove photo"
+            style="position:absolute;top:-8px;right:-8px;background:var(--red);color:#fff;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:.8rem;">✕</button>
+        </div>
+        <div id="imgPlaceholder" style="text-align:center;padding:8px 0;color:var(--muted);font-size:.82rem;">No photo selected</div>
       </div>
     </div>
     <div class="fg2">
@@ -443,18 +452,18 @@ function showEmailSetup(){ alert('1. Sign up at emailjs.com\n2. Connect Gmail/Ou
 
 // ── MENU MANAGER ──
 const DM=[
-  {id:1, name:"Chicken Biryani",      desc:"Aromatic basmati rice layered with spiced chicken and caramelised onions", price:14.99,emoji:"🍛",cat:"rice",    tag:"non-veg",available:true},
-  {id:2, name:"Lamb Curry",           desc:"Slow-cooked lamb in a rich, deeply spiced masala gravy",                    price:13.99,emoji:"🍖",cat:"mains",  tag:"non-veg",available:true},
-  {id:3, name:"Paneer Butter Masala", desc:"Cottage cheese cubes in a velvety tomato-cream sauce",                      price:11.99,emoji:"🧀",cat:"mains",  tag:"veg",    available:true},
-  {id:4, name:"Dal Tadka",            desc:"Yellow lentils tempered with cumin, garlic, and dried chillies",             price:8.99, emoji:"🫕",cat:"sides",  tag:"veg",    available:true},
-  {id:5, name:"Vegetable Biryani",    desc:"Fragrant basmati with seasonal vegetables and whole spices",                 price:11.99,emoji:"🥘",cat:"rice",   tag:"veg",    available:true},
-  {id:6, name:"Chicken Curry",        desc:"Classic home-style chicken curry with fresh ground masala",                  price:12.99,emoji:"🍲",cat:"mains",  tag:"non-veg",spicy:true,available:true},
-  {id:7, name:"Gulab Jamun",          desc:"Soft milk dumplings soaked in rose-cardamom sugar syrup (6 pieces)",         price:5.99, emoji:"🍮",cat:"desserts",tag:"veg",    available:true},
-  {id:8, name:"Kheer",                desc:"Creamy rice pudding slow-cooked with saffron, cardamom and pistachios",      price:4.99, emoji:"🍚",cat:"desserts",tag:"veg",    available:true},
-  {id:9, name:"Raita",                desc:"Cooling yoghurt with cucumber, mint and a hint of cumin",                   price:3.99, emoji:"🥣",cat:"sides",  tag:"veg",    available:true},
-  {id:10,name:"Garlic Naan",          desc:"Soft flatbread brushed with garlic butter (2 pieces)",                       price:3.49, emoji:"🫓",cat:"sides",  tag:"veg",    available:true},
-  {id:11,name:"Fish Curry",           desc:"Coastal-style fish curry with coconut milk and tangy kokum",                 price:13.99,emoji:"🐟",cat:"mains",  tag:"non-veg",spicy:true,available:true},
-  {id:12,name:"Halwa",                desc:"Semolina pudding with ghee, cashews and saffron",                            price:4.49, emoji:"🍯",cat:"desserts",tag:"veg",    available:true},
+  {id:1, name:"Chicken Biryani",      desc:"Aromatic basmati rice layered with spiced chicken and caramelised onions", price:14.99,emoji:"🍛",cat:"rice",    tag:"non-veg",available:true, image:"../images/chicken-biryani.svg"},
+  {id:2, name:"Lamb Curry",           desc:"Slow-cooked lamb in a rich, deeply spiced masala gravy",                    price:13.99,emoji:"🍖",cat:"mains",  tag:"non-veg",available:true, image:"../images/lamb-curry.svg"},
+  {id:3, name:"Paneer Butter Masala", desc:"Cottage cheese cubes in a velvety tomato-cream sauce",                      price:11.99,emoji:"🧀",cat:"mains",  tag:"veg",    available:true, image:"../images/paneer-butter-masala.svg"},
+  {id:4, name:"Dal Tadka",            desc:"Yellow lentils tempered with cumin, garlic, and dried chillies",             price:8.99, emoji:"🫕",cat:"sides",  tag:"veg",    available:true, image:"../images/dal-tadka.svg"},
+  {id:5, name:"Vegetable Biryani",    desc:"Fragrant basmati with seasonal vegetables and whole spices",                 price:11.99,emoji:"🥘",cat:"rice",   tag:"veg",    available:true, image:"../images/vegetable-biryani.svg"},
+  {id:6, name:"Chicken Curry",        desc:"Classic home-style chicken curry with fresh ground masala",                  price:12.99,emoji:"🍲",cat:"mains",  tag:"non-veg",spicy:true,available:true, image:"../images/chicken-curry.svg"},
+  {id:7, name:"Gulab Jamun",          desc:"Soft milk dumplings soaked in rose-cardamom sugar syrup (6 pieces)",         price:5.99, emoji:"🍮",cat:"desserts",tag:"veg",    available:true, image:"../images/gulab-jamun.svg"},
+  {id:8, name:"Kheer",                desc:"Creamy rice pudding slow-cooked with saffron, cardamom and pistachios",      price:4.99, emoji:"🍚",cat:"desserts",tag:"veg",    available:true, image:"../images/kheer.svg"},
+  {id:9, name:"Raita",                desc:"Cooling yoghurt with cucumber, mint and a hint of cumin",                   price:3.99, emoji:"🥣",cat:"sides",  tag:"veg",    available:true, image:"../images/raita.svg"},
+  {id:10,name:"Garlic Naan",          desc:"Soft flatbread brushed with garlic butter (2 pieces)",                       price:3.49, emoji:"🫓",cat:"sides",  tag:"veg",    available:true, image:"../images/garlic-naan.svg"},
+  {id:11,name:"Fish Curry",           desc:"Coastal-style fish curry with coconut milk and tangy kokum",                 price:13.99,emoji:"🐟",cat:"mains",  tag:"non-veg",spicy:true,available:true, image:"../images/fish-curry.svg"},
+  {id:12,name:"Halwa",                desc:"Semolina pudding with ghee, cashews and saffron",                            price:4.49, emoji:"🍯",cat:"desserts",tag:"veg",    available:true, image:"../images/halwa.svg"},
 ];
 const getM=()=>{ const s=localStorage.getItem('aksMenu'); if(s)return JSON.parse(s); localStorage.setItem('aksMenu',JSON.stringify(DM)); return DM; };
 const saveM=m=>localStorage.setItem('aksMenu',JSON.stringify(m));
@@ -496,12 +505,18 @@ function openMI(id){
     document.getElementById('miP').value=it.price; document.getElementById('miE').value=it.emoji||'';
     document.getElementById('miC').value=it.cat; document.getElementById('miT').value=it.tag;
     document.getElementById('miSp').checked=!!it.spicy; document.getElementById('miAv').checked=it.available!==false;
+    // Restore image — detect if it's a path or base64
+    const isSrc = it.image && it.image.startsWith('data:');
+    const isPath = it.image && !isSrc;
+    document.getElementById('miImgPath').value = isPath ? it.image.replace('../images/','') : (it.imagePath||'');
     setImgPreview(it.image||null);
   } else {
     ['miN','miD','miP'].forEach(i=>document.getElementById(i).value='');
     document.getElementById('miE').value='🍽️'; document.getElementById('miC').value='mains';
     document.getElementById('miT').value='veg'; document.getElementById('miSp').checked=false; document.getElementById('miAv').checked=true;
     setImgPreview(null);
+    document.getElementById('miImgPath').value='';
+    document.getElementById('miImgFile').value='';
   }
   document.getElementById('mMenuItem').classList.add('show');
 }
@@ -512,27 +527,48 @@ function saveMI(){
         c=document.getElementById('miC').value, t=document.getElementById('miT').value,
         sp=document.getElementById('miSp').checked, av=document.getElementById('miAv').checked;
   const imgEl=document.getElementById('imgPreview');
-  const image = (imgEl && imgEl.src && imgEl.src.startsWith('data:')) ? imgEl.src : null;
+  const imgPath=document.getElementById('miImgPath').value.trim();
+  // Store relative path if typed, or base64 if uploaded via Browse, or null
+  const image = imgEl && imgEl.src && imgEl.src !== window.location.href
+    ? (imgEl.src.startsWith('data:') ? imgEl.src : (imgPath ? '../images/'+imgPath.replace(/^.*[\\/]/,'') : null))
+    : null;
   if(!n||!d||isNaN(p)||p<0){ toast('Please fill in all required fields.','error'); return; }
   const menu=getM();
   if(eid){ const i=menu.findIndex(m=>m.id===eid); if(i!==-1) menu[i]={...menu[i],name:n,desc:d,price:p,emoji:e,cat:c,tag:t,spicy:sp,available:av,image}; toast(`✅ "${n}" updated`,'success'); }
   else { const nid=Math.max(0,...menu.map(m=>m.id))+1; menu.push({id:nid,name:n,desc:d,price:p,emoji:e,cat:c,tag:t,spicy:sp,available:av,image}); toast(`✅ "${n}" added`,'success'); }
   saveM(menu); closeMI(); renderMM();
 }
-// Image upload helpers
-function handleImgUpload(e){
+// Image helpers
+function handleImgFile(e){
   const file=e.target.files[0]; if(!file)return;
-  if(file.size>2*1024*1024){ toast('Image too large — max 2MB','error'); return; }
+  if(file.size>5*1024*1024){ toast('Image too large — max 5MB','error'); return; }
+  // Suggest filename based on item name
+  const n=document.getElementById('miN').value.trim();
+  const ext=file.name.split('.').pop().toLowerCase()||'jpg';
+  const suggested=n ? n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')+'.'+ext : file.name;
+  document.getElementById('miImgPath').value=suggested;
+  // Read as base64 so it works even without a server
   const reader=new FileReader();
-  reader.onload=ev=>setImgPreview(ev.target.result);
+  reader.onload=ev=>setImgPreview(ev.target.result, suggested);
   reader.readAsDataURL(file);
+  toast('📷 Image loaded. Place the file in the images/ folder as: '+suggested,'success');
 }
-function setImgPreview(src){
+function previewImgPath(val){
+  if(!val){ setImgPreview(null); return; }
+  // Try to load from images/ folder path
+  const src='../images/'+val.replace(/^.*[\\/]/,'');
+  const img=new Image();
+  img.onload=()=>setImgPreview(src, val);
+  img.onerror=()=>{ setImgPreview(null); };
+  img.src=src;
+}
+function setImgPreview(src, path){
   const ph=document.getElementById('imgPlaceholder'), pw=document.getElementById('imgPreviewWrap'), pr=document.getElementById('imgPreview');
   if(src){ pr.src=src; ph.style.display='none'; pw.style.display='block'; }
-  else { pr.src=''; ph.style.display='block'; pw.style.display='none'; document.getElementById('miImg').value=''; }
+  else { pr.src=''; ph.style.display='block'; pw.style.display='none'; }
+  if(path) document.getElementById('miImgPath').value=path;
 }
-function removeImg(e){ e.stopPropagation(); setImgPreview(null); }
+function removeImg(){ setImgPreview(null); document.getElementById('miImgPath').value=''; document.getElementById('miImgFile').value=''; }
 function toggleAv(id){ const m=getM(); const i=m.findIndex(x=>x.id===id); if(i===-1)return; m[i].available=!m[i].available; saveM(m); renderMM(); toast(`${m[i].name} is now ${m[i].available?'visible ✅':'hidden ⏸'}`,'success'); }
 function delMI(id){ const it=getM().find(m=>m.id===id); if(!confirm(`Delete "${it?.name}"?`))return; saveM(getM().filter(m=>m.id!==id)); renderMM(); toast(`"${it?.name}" deleted`,'error'); }
 
