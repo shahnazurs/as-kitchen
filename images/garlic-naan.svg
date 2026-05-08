@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#5A3A6A"/>
+  <rect width="400" height="300" fill="rgba(0,0,0,0.2)"/>
+  <text x="200" y="140" font-size="80" text-anchor="middle" dominant-baseline="middle">🫓</text>
+  <text x="200" y="220" font-size="18" font-family="Georgia,serif" fill="rgba(255,255,255,0.85)" text-anchor="middle" dominant-baseline="middle">Garlic Naan</text>
+</svg>
