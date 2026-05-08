@@ -107,7 +107,15 @@
     .mc{background:#fff;border-radius:14px;border:1px solid var(--border);overflow:hidden;transition:box-shadow .2s;}
     .mc:hover{box-shadow:0 8px 24px rgba(26,15,8,.1);}
     .mc.unavail{opacity:.55;}
-    .mc-img{height:100px;display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative;}
+    .mc-img{height:120px;display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative;overflow:hidden;}
+    .mc-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+    .mc-img .mc-emoji{position:relative;z-index:1;}
+    .img-upload-zone{border:2px dashed var(--border);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--cream);position:relative;}
+    .img-upload-zone:hover{border-color:var(--spice);background:#FEF5F0;}
+    .img-upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+    .img-preview-wrap{position:relative;display:inline-block;margin-top:10px;}
+    .img-preview{width:100%;max-height:160px;object-fit:cover;border-radius:8px;display:block;}
+    .img-remove{position:absolute;top:-8px;right:-8px;background:var(--red);color:#fff;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;line-height:1;}
     .avbadge{position:absolute;top:8px;right:8px;font-size:.68rem;padding:3px 9px;border-radius:999px;font-weight:600;}
     .av-yes{background:#E8F5E4;color:#2D7A27;}
     .av-no{background:#F5F5F5;color:#999;}
@@ -300,7 +308,22 @@
     <div class="ff"><label>Description *</label><textarea id="miD" placeholder="Short description" style="min-height:68px"></textarea></div>
     <div class="fg2">
       <div class="ff"><label>Price ($) *</label><input id="miP" type="number" min="0" step="0.01" placeholder="0.00"/></div>
-      <div class="ff"><label>Emoji</label><input id="miE" type="text" placeholder="🍛" maxlength="4"/></div>
+      <div class="ff"><label>Emoji (fallback)</label><input id="miE" type="text" placeholder="🍛" maxlength="4"/></div>
+    </div>
+    <div class="ff">
+      <label>Food Photo</label>
+      <div class="img-upload-zone" id="imgZone" onclick="document.getElementById('miImg').click()">
+        <input type="file" id="miImg" accept="image/*" style="display:none" onchange="handleImgUpload(event)"/>
+        <div id="imgPlaceholder">
+          <div style="font-size:2rem;margin-bottom:6px;">📷</div>
+          <div style="font-size:.85rem;color:var(--muted);font-weight:500;">Click to upload a photo</div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:4px;">JPG, PNG, WebP — max 2MB</div>
+        </div>
+        <div id="imgPreviewWrap" style="display:none;">
+          <img id="imgPreview" class="img-preview" src="" alt="Preview"/>
+          <button class="img-remove" onclick="removeImg(event)" title="Remove photo">✕</button>
+        </div>
+      </div>
     </div>
     <div class="fg2">
       <div class="ff"><label>Category *</label>
@@ -444,7 +467,9 @@ function renderMM(){
   if(!items.length){ g.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--muted)">No items in this category.</div>`; return; }
   g.innerHTML=items.map(it=>`
     <div class="mc ${it.available===false?'unavail':''}">
-      <div class="mc-img" style="background:${CBG[it.cat]||'#333'}">${it.emoji||'🍽️'}
+      <div class="mc-img" style="background:${CBG[it.cat]||'#333'}">
+        ${it.image ? `<img src="${it.image}" alt="${it.name}"/>` : ''}
+        <span class="mc-emoji" style="${it.image?'text-shadow:0 2px 8px rgba(0,0,0,.5);':''}font-size:3rem">${it.emoji||'🍽️'}</span>
         <span class="avbadge ${it.available!==false?'av-yes':'av-no'}">${it.available!==false?'✅ Available':'⏸ Hidden'}</span>
       </div>
       <div class="mc-body">
@@ -471,10 +496,12 @@ function openMI(id){
     document.getElementById('miP').value=it.price; document.getElementById('miE').value=it.emoji||'';
     document.getElementById('miC').value=it.cat; document.getElementById('miT').value=it.tag;
     document.getElementById('miSp').checked=!!it.spicy; document.getElementById('miAv').checked=it.available!==false;
+    setImgPreview(it.image||null);
   } else {
     ['miN','miD','miP'].forEach(i=>document.getElementById(i).value='');
     document.getElementById('miE').value='🍽️'; document.getElementById('miC').value='mains';
     document.getElementById('miT').value='veg'; document.getElementById('miSp').checked=false; document.getElementById('miAv').checked=true;
+    setImgPreview(null);
   }
   document.getElementById('mMenuItem').classList.add('show');
 }
@@ -484,12 +511,28 @@ function saveMI(){
         p=parseFloat(document.getElementById('miP').value), e=document.getElementById('miE').value.trim()||'🍽️',
         c=document.getElementById('miC').value, t=document.getElementById('miT').value,
         sp=document.getElementById('miSp').checked, av=document.getElementById('miAv').checked;
+  const imgEl=document.getElementById('imgPreview');
+  const image = (imgEl && imgEl.src && imgEl.src.startsWith('data:')) ? imgEl.src : null;
   if(!n||!d||isNaN(p)||p<0){ toast('Please fill in all required fields.','error'); return; }
   const menu=getM();
-  if(eid){ const i=menu.findIndex(m=>m.id===eid); if(i!==-1) menu[i]={...menu[i],name:n,desc:d,price:p,emoji:e,cat:c,tag:t,spicy:sp,available:av}; toast(`✅ "${n}" updated`,'success'); }
-  else { const nid=Math.max(0,...menu.map(m=>m.id))+1; menu.push({id:nid,name:n,desc:d,price:p,emoji:e,cat:c,tag:t,spicy:sp,available:av}); toast(`✅ "${n}" added`,'success'); }
+  if(eid){ const i=menu.findIndex(m=>m.id===eid); if(i!==-1) menu[i]={...menu[i],name:n,desc:d,price:p,emoji:e,cat:c,tag:t,spicy:sp,available:av,image}; toast(`✅ "${n}" updated`,'success'); }
+  else { const nid=Math.max(0,...menu.map(m=>m.id))+1; menu.push({id:nid,name:n,desc:d,price:p,emoji:e,cat:c,tag:t,spicy:sp,available:av,image}); toast(`✅ "${n}" added`,'success'); }
   saveM(menu); closeMI(); renderMM();
 }
+// Image upload helpers
+function handleImgUpload(e){
+  const file=e.target.files[0]; if(!file)return;
+  if(file.size>2*1024*1024){ toast('Image too large — max 2MB','error'); return; }
+  const reader=new FileReader();
+  reader.onload=ev=>setImgPreview(ev.target.result);
+  reader.readAsDataURL(file);
+}
+function setImgPreview(src){
+  const ph=document.getElementById('imgPlaceholder'), pw=document.getElementById('imgPreviewWrap'), pr=document.getElementById('imgPreview');
+  if(src){ pr.src=src; ph.style.display='none'; pw.style.display='block'; }
+  else { pr.src=''; ph.style.display='block'; pw.style.display='none'; document.getElementById('miImg').value=''; }
+}
+function removeImg(e){ e.stopPropagation(); setImgPreview(null); }
 function toggleAv(id){ const m=getM(); const i=m.findIndex(x=>x.id===id); if(i===-1)return; m[i].available=!m[i].available; saveM(m); renderMM(); toast(`${m[i].name} is now ${m[i].available?'visible ✅':'hidden ⏸'}`,'success'); }
 function delMI(id){ const it=getM().find(m=>m.id===id); if(!confirm(`Delete "${it?.name}"?`))return; saveM(getM().filter(m=>m.id!==id)); renderMM(); toast(`"${it?.name}" deleted`,'error'); }
 
