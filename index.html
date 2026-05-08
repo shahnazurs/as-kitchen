@@ -864,18 +864,18 @@
 // ── MENU DATA ──
 // Load menu from admin panel (localStorage) — falls back to defaults if none saved
 const DEFAULT_MENU = [
-  { id:1,  name:"Chicken Biryani",      desc:"Aromatic basmati rice layered with spiced chicken and caramelised onions", price:14.99, emoji:"🍛", cat:"rice",    tag:"non-veg", available:true },
-  { id:2,  name:"Lamb Curry",           desc:"Slow-cooked lamb in a rich, deeply spiced masala gravy",                    price:13.99, emoji:"🍖", cat:"mains",  tag:"non-veg", available:true },
-  { id:3,  name:"Paneer Butter Masala", desc:"Cottage cheese cubes in a velvety tomato-cream sauce",                      price:11.99, emoji:"🧀", cat:"mains",  tag:"veg",     available:true },
-  { id:4,  name:"Dal Tadka",            desc:"Yellow lentils tempered with cumin, garlic, and dried chillies",             price:8.99,  emoji:"🫕", cat:"sides",  tag:"veg",     available:true },
-  { id:5,  name:"Vegetable Biryani",    desc:"Fragrant basmati with seasonal vegetables and whole spices",                 price:11.99, emoji:"🥘", cat:"rice",   tag:"veg",     available:true },
-  { id:6,  name:"Chicken Curry",        desc:"Classic home-style chicken curry with fresh ground masala",                  price:12.99, emoji:"🍲", cat:"mains",  tag:"non-veg", spicy:true, available:true },
-  { id:7,  name:"Gulab Jamun",          desc:"Soft milk dumplings soaked in rose-cardamom sugar syrup (6 pieces)",         price:5.99,  emoji:"🍮", cat:"desserts",tag:"veg",     available:true },
-  { id:8,  name:"Kheer",               desc:"Creamy rice pudding slow-cooked with saffron, cardamom and pistachios",      price:4.99,  emoji:"🍚", cat:"desserts",tag:"veg",     available:true },
-  { id:9,  name:"Raita",               desc:"Cooling yoghurt with cucumber, mint and a hint of cumin",                   price:3.99,  emoji:"🥣", cat:"sides",  tag:"veg",     available:true },
-  { id:10, name:"Garlic Naan",          desc:"Soft flatbread brushed with garlic butter (2 pieces)",                       price:3.49,  emoji:"🫓", cat:"sides",  tag:"veg",     available:true },
-  { id:11, name:"Fish Curry",           desc:"Coastal-style fish curry with coconut milk and tangy kokum",                 price:13.99, emoji:"🐟", cat:"mains",  tag:"non-veg", spicy:true, available:true },
-  { id:12, name:"Halwa",               desc:"Semolina pudding with ghee, cashews and saffron",                            price:4.49,  emoji:"🍯", cat:"desserts",tag:"veg",     available:true },
+  { id:1,  name:"Chicken Biryani",      desc:"Aromatic basmati rice layered with spiced chicken and caramelised onions", price:14.99, emoji:"🍛", cat:"rice",    tag:"non-veg", available:true, image:"images/chicken-biryani.svg" },
+  { id:2,  name:"Lamb Curry",           desc:"Slow-cooked lamb in a rich, deeply spiced masala gravy",                    price:13.99, emoji:"🍖", cat:"mains",  tag:"non-veg", available:true, image:"images/lamb-curry.svg" },
+  { id:3,  name:"Paneer Butter Masala", desc:"Cottage cheese cubes in a velvety tomato-cream sauce",                      price:11.99, emoji:"🧀", cat:"mains",  tag:"veg",     available:true, image:"images/paneer-butter-masala.svg" },
+  { id:4,  name:"Dal Tadka",            desc:"Yellow lentils tempered with cumin, garlic, and dried chillies",             price:8.99,  emoji:"🫕", cat:"sides",  tag:"veg",     available:true, image:"images/dal-tadka.svg" },
+  { id:5,  name:"Vegetable Biryani",    desc:"Fragrant basmati with seasonal vegetables and whole spices",                 price:11.99, emoji:"🥘", cat:"rice",   tag:"veg",     available:true, image:"images/vegetable-biryani.svg" },
+  { id:6,  name:"Chicken Curry",        desc:"Classic home-style chicken curry with fresh ground masala",                  price:12.99, emoji:"🍲", cat:"mains",  tag:"non-veg", spicy:true, available:true, image:"images/chicken-curry.svg" },
+  { id:7,  name:"Gulab Jamun",          desc:"Soft milk dumplings soaked in rose-cardamom sugar syrup (6 pieces)",         price:5.99,  emoji:"🍮", cat:"desserts",tag:"veg",     available:true, image:"images/gulab-jamun.svg" },
+  { id:8,  name:"Kheer",               desc:"Creamy rice pudding slow-cooked with saffron, cardamom and pistachios",      price:4.99,  emoji:"🍚", cat:"desserts",tag:"veg",     available:true, image:"images/kheer.svg" },
+  { id:9,  name:"Raita",               desc:"Cooling yoghurt with cucumber, mint and a hint of cumin",                   price:3.99,  emoji:"🥣", cat:"sides",  tag:"veg",     available:true, image:"images/raita.svg" },
+  { id:10, name:"Garlic Naan",          desc:"Soft flatbread brushed with garlic butter (2 pieces)",                       price:3.49,  emoji:"🫓", cat:"sides",  tag:"veg",     available:true, image:"images/garlic-naan.svg" },
+  { id:11, name:"Fish Curry",           desc:"Coastal-style fish curry with coconut milk and tangy kokum",                 price:13.99, emoji:"🐟", cat:"mains",  tag:"non-veg", spicy:true, available:true, image:"images/fish-curry.svg" },
+  { id:12, name:"Halwa",               desc:"Semolina pudding with ghee, cashews and saffron",                            price:4.49,  emoji:"🍯", cat:"desserts",tag:"veg",     available:true, image:"images/halwa.svg" },
 ];
 // Always read fresh from localStorage so admin changes reflect immediately
 function getLiveMenu() {
@@ -903,7 +903,7 @@ function renderMenu() {
   grid.innerHTML = items.map(item => `
     <div class="menu-item">
       <div class="menu-item-img" style="background:${getBg(item.cat)}">
-        ${item.image ? `<img src="${item.image}" alt="${item.name}"/>` : ''}
+        ${item.image ? `<img src="${item.image.replace('../images/','images/')}" alt="${item.name}" onerror="this.style.display='none'"/>` : ''}
         <span class="emoji-label">${item.image ? '' : (item.emoji || '🍽️')}</span>
       </div>
       <div class="menu-item-body">
@@ -935,7 +935,7 @@ function renderCheckboxes() {
     <label class="checkbox-item" id="cb_${item.id}">
       <input type="checkbox" value="${item.id}" onchange="toggleItem(${item.id},${item.price},'${item.name}')" />
       ${item.image
-        ? `<img src="${item.image}" alt="${item.name}" style="width:32px;height:32px;object-fit:cover;border-radius:6px;flex-shrink:0;"/>`
+        ? `<img src="${item.image.replace('../images/','images/')}" alt="${item.name}" style="width:32px;height:32px;object-fit:cover;border-radius:6px;flex-shrink:0;" onerror="this.style.display='none'"/>`
         : `<span style="font-size:1.2rem;flex-shrink:0;">${item.emoji || '🍽️'}</span>`}
       <span class="item-name">${item.name}</span>
       <span class="item-price">$${item.price.toFixed(2)}</span>
