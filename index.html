@@ -864,9 +864,11 @@ const DEFAULT_MENU = [
   { id:11, name:"Fish Curry",           desc:"Coastal-style fish curry with coconut milk and tangy kokum",                 price:13.99, emoji:"🐟", cat:"mains",  tag:"non-veg", spicy:true, available:true },
   { id:12, name:"Halwa",               desc:"Semolina pudding with ghee, cashews and saffron",                            price:4.49,  emoji:"🍯", cat:"desserts",tag:"veg",     available:true },
 ];
-// Show only available items; admin can hide items via the Menu Manager
-const _stored = localStorage.getItem('aksMenu');
-const MENU = (_stored ? JSON.parse(_stored) : DEFAULT_MENU).filter(m => m.available !== false);
+// Always read fresh from localStorage so admin changes reflect immediately
+function getLiveMenu() {
+  const stored = localStorage.getItem('aksMenu');
+  return (stored ? JSON.parse(stored) : DEFAULT_MENU).filter(m => m.available !== false);
+}
 
 let selectedItems = {};
 let currentFilter = 'all';
@@ -878,11 +880,16 @@ function filterMenu(cat) {
 }
 
 function renderMenu() {
+  const MENU = getLiveMenu();
   const grid = document.getElementById('menuGrid');
   const items = currentFilter === 'all' ? MENU : MENU.filter(m => m.cat === currentFilter);
+  if (items.length === 0) {
+    grid.innerHTML = '<p style="color:var(--text-muted);grid-column:1/-1;padding:24px 0;">No items available in this category right now.</p>';
+    return;
+  }
   grid.innerHTML = items.map(item => `
     <div class="menu-item">
-      <div class="menu-item-img" style="background:${getBg(item.cat)}">${item.emoji}</div>
+      <div class="menu-item-img" style="background:${getBg(item.cat)}">${item.emoji || '🍽️'}</div>
       <div class="menu-item-body">
         <h3>${item.name}</h3>
         <p>${item.desc}</p>
@@ -902,11 +909,16 @@ function getBg(cat) {
 }
 
 function renderCheckboxes() {
+  const MENU = getLiveMenu();
   const container = document.getElementById('menuCheckboxes');
+  if (MENU.length === 0) {
+    container.innerHTML = '<p style="color:var(--text-muted);font-size:.85rem;padding:8px 0;">No items available right now. Please check back later.</p>';
+    return;
+  }
   container.innerHTML = MENU.map(item => `
     <label class="checkbox-item" id="cb_${item.id}">
       <input type="checkbox" value="${item.id}" onchange="toggleItem(${item.id},${item.price},'${item.name}')" />
-      <span class="item-name">${item.emoji} ${item.name}</span>
+      <span class="item-name">${item.emoji || '🍽️'} ${item.name}</span>
       <span class="item-price">$${item.price.toFixed(2)}</span>
     </label>
   `).join('');
@@ -1016,6 +1028,16 @@ function closeModal() {
 renderMenu();
 renderCheckboxes();
 initDatePicker();
+
+// Auto-refresh menu if admin changes it in another tab
+window.addEventListener('storage', e => {
+  if (e.key === 'aksMenu') {
+    selectedItems = {};          // reset cart — items may have changed
+    renderMenu();
+    renderCheckboxes();
+    updateTotal();
+  }
+});
 </script>
 </body>
 </html>
