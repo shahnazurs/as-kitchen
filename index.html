@@ -370,11 +370,24 @@
       position: relative;
       overflow: hidden;
     }
+    .menu-item-img img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+    .menu-item-img .emoji-label {
+      position: relative;
+      z-index: 1;
+    }
     .menu-item-img::after {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.3));
+      background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.45));
+      z-index: 1;
     }
 
     .menu-item-body { padding: 20px; }
@@ -889,7 +902,10 @@ function renderMenu() {
   }
   grid.innerHTML = items.map(item => `
     <div class="menu-item">
-      <div class="menu-item-img" style="background:${getBg(item.cat)}">${item.emoji || '🍽️'}</div>
+      <div class="menu-item-img" style="background:${getBg(item.cat)}">
+        ${item.image ? `<img src="${item.image}" alt="${item.name}"/>` : ''}
+        <span class="emoji-label">${item.image ? '' : (item.emoji || '🍽️')}</span>
+      </div>
       <div class="menu-item-body">
         <h3>${item.name}</h3>
         <p>${item.desc}</p>
@@ -918,7 +934,10 @@ function renderCheckboxes() {
   container.innerHTML = MENU.map(item => `
     <label class="checkbox-item" id="cb_${item.id}">
       <input type="checkbox" value="${item.id}" onchange="toggleItem(${item.id},${item.price},'${item.name}')" />
-      <span class="item-name">${item.emoji || '🍽️'} ${item.name}</span>
+      ${item.image
+        ? `<img src="${item.image}" alt="${item.name}" style="width:32px;height:32px;object-fit:cover;border-radius:6px;flex-shrink:0;"/>`
+        : `<span style="font-size:1.2rem;flex-shrink:0;">${item.emoji || '🍽️'}</span>`}
+      <span class="item-name">${item.name}</span>
       <span class="item-price">$${item.price.toFixed(2)}</span>
     </label>
   `).join('');
