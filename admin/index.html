@@ -626,7 +626,7 @@ function renderOrders() {
   document.getElementById('ordersLoading').style.display = 'none';
   document.getElementById('oEmpty').style.display = orders.length ? 'none' : 'block';
   document.getElementById('ordersTable').style.display = (!isMobile && orders.length) ? 'table' : 'none';
-document.getElementById('oCards').style.display = (isMobile && orders.length) ? 'flex' : 'none';
+  document.getElementById('oCards').style.display = (isMobile && orders.length) ? 'flex' : 'none';
   document.getElementById('oCards').style.display = orders.length ? 'flex' : 'none';
 
   const statusOpts = ['New','Confirmed','Ready','Delivered','Cancelled']
@@ -655,7 +655,7 @@ document.getElementById('oCards').style.display = (isMobile && orders.length) ? 
         </select>
       </td>
       <td><div class="acts">
-        <button class="abtn" onclick="viewO('${o.id}')">✏️ Edit</button>
+        <button class="abtn" onclick="viewO('${o.id}')">👁 View</button>
         <button class="abtn d" onclick="delO('${o.id}', this)">Delete</button>
       </div></td>
     </tr>`;
@@ -690,7 +690,7 @@ document.getElementById('oCards').style.display = (isMobile && orders.length) ? 
           ).join('')}
         </select>
         <div class="order-card-actions">
-          <button class="abtn" onclick="viewO('${o.id}')">✏️ Edit</button>
+          <button class="abtn" onclick="viewO('${o.id}')">👁 View</button>
           <button class="abtn d" onclick="delO('${o.id}', this)">🗑</button>
         </div>
       </div>
