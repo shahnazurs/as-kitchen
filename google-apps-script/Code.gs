@@ -4,7 +4,7 @@
 //  Deploy as Web App: Execute as "Me", Access "Anyone"
 // ════════════════════════════════════════════════════════════
 
-const SHEET_ID   = 'https://docs.google.com/spreadsheets/d/14cJHDFbsSACNXx18fsjKOyX30zwNS-REgbNnDDsY-G0/edit?gid=0#gid=0'; // ← paste your Sheet ID
+const SHEET_ID   = 'YOUR_GOOGLE_SHEET_ID_HERE'; // ← paste your Sheet ID
 const MENU_TAB   = 'Menu';
 const ORDERS_TAB = 'Orders';
 
@@ -54,6 +54,13 @@ function err(msg) {
   return ContentService
     .createTextOutput(JSON.stringify({ ok: false, error: msg }))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+// Handle preflight OPTIONS requests (CORS)
+function doOptions(e) {
+  return ContentService
+    .createTextOutput('')
+    .setMimeType(ContentService.MimeType.TEXT);
 }
 function getSheet(name) {
   const ss = SpreadsheetApp.openById(SHEET_ID);
