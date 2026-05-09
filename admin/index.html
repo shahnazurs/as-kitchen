@@ -31,7 +31,7 @@
     .login-error{color:#FF6B6B;font-size:.85rem;margin-top:16px;display:none;}
     .login-hint{color:rgba(255,255,255,.25);font-size:.75rem;margin-top:24px;}
 
-    /* ADMIN NAV */
+    /* NAV */
     #adminScreen{display:none;min-height:100vh;}
     .admin-nav{background:var(--dark);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;gap:16px;}
     .nav-logo{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;color:#fff;white-space:nowrap;}
@@ -41,11 +41,22 @@
     .tab-btn.active{background:rgba(255,255,255,.15);border-color:transparent;color:#fff;font-weight:600;}
     .nav-right{display:flex;align-items:center;gap:12px;flex-shrink:0;}
     .nav-badge{background:var(--spice);color:#fff;padding:4px 12px;border-radius:999px;font-size:.78rem;font-weight:600;white-space:nowrap;}
+    .refresh-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);padding:8px 14px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.85rem;transition:all .2s;}
+    .refresh-btn:hover{background:rgba(255,255,255,.15);color:#fff;}
     .logout-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);padding:8px 16px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.85rem;transition:all .2s;white-space:nowrap;}
     .logout-btn:hover{background:rgba(255,255,255,.15);color:#fff;}
 
     /* BODY */
     .admin-body{padding:32px;max-width:1200px;margin:0 auto;}
+
+    /* CONFIG BANNER */
+    .config-banner{background:#1A0F08;border:1px solid var(--turmeric);border-radius:12px;padding:20px 24px;margin-bottom:28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+    .config-banner .cb-icon{font-size:1.8rem;flex-shrink:0;}
+    .config-banner h3{color:var(--turmeric);font-size:1rem;margin-bottom:4px;}
+    .config-banner p{color:rgba(255,255,255,.65);font-size:.82rem;line-height:1.5;}
+    .config-banner code{background:rgba(255,255,255,.1);padding:2px 8px;border-radius:4px;font-family:monospace;font-size:.82rem;color:var(--turmeric);}
+    .config-banner.ok{border-color:var(--green);background:#0A2010;}
+    .config-banner.ok h3{color:#6BCF6B;}
 
     /* STATS */
     .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:32px;}
@@ -69,7 +80,7 @@
     .clear-btn{padding:8px 16px;background:var(--red);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;}
     .clear-btn:hover{opacity:.85;}
 
-    /* ORDERS TABLE */
+    /* TABLE */
     .orders-wrap{background:#fff;border-radius:16px;border:1px solid var(--border);overflow:hidden;}
     table{width:100%;border-collapse:collapse;}
     thead th{background:var(--dark);color:rgba(255,255,255,.7);padding:13px 16px;text-align:left;font-size:.73rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;}
@@ -94,8 +105,9 @@
     .abtn{padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:#fff;font-family:'DM Sans',sans-serif;font-size:.73rem;font-weight:500;cursor:pointer;transition:all .15s;color:var(--text);}
     .abtn:hover{background:var(--dark);color:#fff;border-color:var(--dark);}
     .abtn.d:hover{background:var(--red);border-color:var(--red);color:#fff;}
+    .abtn:disabled{opacity:.4;cursor:not-allowed;}
     .empty{padding:60px 24px;text-align:center;color:var(--muted);}
-    .empty .eicon{font-size:3rem;margin-bottom:16px;}
+    .eicon{font-size:3rem;margin-bottom:16px;}
 
     /* MENU MANAGER */
     .mm-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:16px;}
@@ -110,13 +122,7 @@
     .mc-img{height:120px;display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative;overflow:hidden;}
     .mc-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
     .mc-img .mc-emoji{position:relative;z-index:1;}
-    .img-upload-zone{border:2px dashed var(--border);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--cream);position:relative;}
-    .img-upload-zone:hover{border-color:var(--spice);background:#FEF5F0;}
-    .img-upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-    .img-preview-wrap{position:relative;display:inline-block;margin-top:10px;}
-    .img-preview{width:100%;max-height:160px;object-fit:cover;border-radius:8px;display:block;}
-    .img-remove{position:absolute;top:-8px;right:-8px;background:var(--red);color:#fff;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;line-height:1;}
-    .avbadge{position:absolute;top:8px;right:8px;font-size:.68rem;padding:3px 9px;border-radius:999px;font-weight:600;}
+    .avbadge{position:absolute;top:8px;right:8px;font-size:.68rem;padding:3px 9px;border-radius:999px;font-weight:600;z-index:2;}
     .av-yes{background:#E8F5E4;color:#2D7A27;}
     .av-no{background:#F5F5F5;color:#999;}
     .mc-body{padding:16px;}
@@ -137,6 +143,11 @@
     .mc-tog:hover{border-color:var(--dark);color:var(--dark);}
     .mc-del{padding:8px 10px;background:transparent;color:var(--red);border:1.5px solid #F5BDBD;border-radius:8px;cursor:pointer;font-size:.8rem;transition:all .2s;}
     .mc-del:hover{background:var(--red);color:#fff;border-color:var(--red);}
+
+    /* LOADING SPINNER */
+    .loading{text-align:center;padding:60px;color:var(--muted);}
+    .spinner{display:inline-block;width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--spice);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:16px;}
+    @keyframes spin{to{transform:rotate(360deg)}}
 
     /* MODALS */
     .overlay{position:fixed;inset:0;background:rgba(26,15,8,.65);backdrop-filter:blur(4px);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .2s;}
@@ -166,16 +177,20 @@
     .macts{display:flex;gap:10px;margin-top:20px;}
     .bsave{flex:1;padding:12px;background:var(--spice);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;transition:all .2s;}
     .bsave:hover{background:var(--spice-light);}
+    .bsave:disabled{opacity:.5;cursor:not-allowed;}
     .bcancel{padding:12px 20px;background:transparent;color:var(--muted);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.95rem;transition:all .2s;}
     .bcancel:hover{border-color:var(--dark);color:var(--dark);}
 
-    .toast{position:fixed;bottom:28px;right:28px;background:var(--dark);color:#fff;padding:13px 22px;border-radius:10px;font-size:.88rem;font-weight:500;z-index:999;transform:translateY(80px);opacity:0;transition:all .3s;}
+    /* image upload */
+    .img-upload-zone{border:2px dashed var(--border);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;background:var(--cream);position:relative;}
+    .img-upload-zone:hover{border-color:var(--spice);background:#FEF5F0;}
+    .img-preview{width:100%;max-height:140px;object-fit:cover;border-radius:8px;display:block;}
+    .img-remove{position:absolute;top:-8px;right:-8px;background:var(--red);color:#fff;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;}
+
+    .toast{position:fixed;bottom:28px;right:28px;background:var(--dark);color:#fff;padding:13px 22px;border-radius:10px;font-size:.88rem;font-weight:500;z-index:999;transform:translateY(80px);opacity:0;transition:all .3s;max-width:320px;}
     .toast.show{transform:translateY(0);opacity:1;}
     .toast.success{background:var(--green);}
     .toast.error{background:var(--red);}
-
-    .info-bar{background:#FEF3E2;border:1px solid #F5D08A;border-radius:10px;padding:13px 18px;margin-bottom:24px;font-size:.83rem;color:#7A4800;}
-    .info-bar a{color:var(--spice);text-decoration:underline;cursor:pointer;}
 
     @media(max-width:900px){
       .stats-row{grid-template-columns:1fr 1fr;}
@@ -203,14 +218,13 @@
 <div id="adminScreen">
   <nav class="admin-nav">
     <div class="nav-logo">A's <span>Kitchen</span></div>
-
     <div class="nav-tabs">
       <button class="tab-btn active" id="tbOrders" onclick="showTab('orders')">📋 Orders</button>
       <button class="tab-btn"        id="tbMenu"   onclick="showTab('menu')">🍽️ Menu Manager</button>
     </div>
-
     <div class="nav-right">
       <span class="nav-badge" id="newBadge">0 New</span>
+      <button class="refresh-btn" onclick="refreshAll()">🔄 Refresh</button>
       <a href="../index.html" style="color:rgba(255,255,255,.5);font-size:.83rem;text-decoration:none;">← Customer Site</a>
       <button class="logout-btn" onclick="doLogout()">Sign Out</button>
     </div>
@@ -218,15 +232,23 @@
 
   <div class="admin-body">
 
+    <!-- CONFIG BANNER -->
+    <div class="config-banner" id="configBanner">
+      <div class="cb-icon">⚙️</div>
+      <div>
+        <h3>Google Sheets Setup Required</h3>
+        <p>Open <code>admin/index.html</code> and <code>index.html</code>, find <code>YOUR_APPS_SCRIPT_URL_HERE</code> and replace it with your deployed Apps Script Web App URL.<br/>
+        See <code>google-apps-script/SETUP.md</code> for step-by-step instructions.</p>
+      </div>
+    </div>
+
     <!-- ORDERS TAB -->
     <div id="pOrders">
-      <div class="info-bar">⚠️ <strong>Email Alerts:</strong> Demo mode — emails logged to console. To enable real emails, <a onclick="showEmailSetup()">see setup guide</a>.</div>
-
       <div class="stats-row">
-        <div class="stat-card spice"><div class="stat-label">Total Orders</div><div class="stat-num" id="stTotal">0</div><div class="stat-sub">all time</div></div>
-        <div class="stat-card gold"> <div class="stat-label">New Orders</div> <div class="stat-num" id="stNew">0</div>  <div class="stat-sub">awaiting confirmation</div></div>
-        <div class="stat-card green"><div class="stat-label">Revenue</div>    <div class="stat-num" id="stRev">$0</div> <div class="stat-sub">total</div></div>
-        <div class="stat-card blue"> <div class="stat-label">This Weekend</div><div class="stat-num" id="stWknd">0</div><div class="stat-sub">orders</div></div>
+        <div class="stat-card spice"><div class="stat-label">Total Orders</div><div class="stat-num" id="stTotal">—</div><div class="stat-sub">all time</div></div>
+        <div class="stat-card gold"> <div class="stat-label">New Orders</div> <div class="stat-num" id="stNew">—</div>  <div class="stat-sub">awaiting confirmation</div></div>
+        <div class="stat-card green"><div class="stat-label">Revenue</div>    <div class="stat-num" id="stRev">—</div>  <div class="stat-sub">total</div></div>
+        <div class="stat-card blue"> <div class="stat-label">This Weekend</div><div class="stat-num" id="stWknd">—</div><div class="stat-sub">orders</div></div>
       </div>
 
       <div class="toolbar">
@@ -238,12 +260,12 @@
           <button class="filter-btn" onclick="setOF('Ready',this)">Ready</button>
           <button class="filter-btn" onclick="setOF('Delivered',this)">Delivered</button>
           <input class="search-inp" id="srch" type="text" placeholder="🔍 Search..." oninput="renderOrders()"/>
-          <button class="clear-btn" onclick="clearOrders()">🗑 Clear All</button>
         </div>
       </div>
 
       <div class="orders-wrap">
-        <table>
+        <div class="loading" id="ordersLoading"><div class="spinner"></div><br/>Loading orders from Google Sheets…</div>
+        <table id="ordersTable" style="display:none">
           <thead><tr>
             <th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th>
             <th>Delivery</th><th>Placed At</th><th>Status</th><th>Actions</th>
@@ -253,7 +275,7 @@
         <div class="empty" id="oEmpty" style="display:none">
           <div class="eicon">🍽️</div>
           <h3 style="font-family:'Playfair Display',serif;margin-bottom:8px;">No orders yet</h3>
-          <p>Orders placed on the customer site will appear here.</p>
+          <p>Orders will appear here once customers place them.</p>
         </div>
       </div>
     </div>
@@ -264,11 +286,10 @@
         <div>
           <div class="mm-label">Menu Management</div>
           <h2 style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;">🍽️ Menu Items</h2>
-          <p style="font-size:.83rem;color:var(--muted);margin-top:5px;">Changes are instantly reflected on the customer ordering page.</p>
+          <p style="font-size:.83rem;color:var(--muted);margin-top:5px;">Saved to Google Sheets — visible on all devices instantly.</p>
         </div>
         <button class="add-btn" onclick="openMI(null)">+ Add New Item</button>
       </div>
-
       <div class="mm-filters">
         <button class="filter-btn active" onclick="setMF('all',this)">All Items</button>
         <button class="filter-btn" onclick="setMF('mains',this)">Mains</button>
@@ -276,8 +297,8 @@
         <button class="filter-btn" onclick="setMF('sides',this)">Sides</button>
         <button class="filter-btn" onclick="setMF('desserts',this)">Desserts</button>
       </div>
-
-      <div class="mm-grid" id="mmGrid"></div>
+      <div class="loading" id="menuLoading"><div class="spinner"></div><br/>Loading menu from Google Sheets…</div>
+      <div class="mm-grid" id="mmGrid" style="display:none"></div>
     </div>
 
   </div>
@@ -288,51 +309,15 @@
   <div class="mbox" id="mDetailBox" style="max-width:540px;"></div>
 </div>
 
-<!-- EMAIL MODAL -->
-<div class="overlay" id="mEmail">
-  <div class="mbox" style="max-width:500px;">
-    <div class="mhead"><h2>📧 Send Email Alert</h2><button class="mclose" onclick="closeEM()">✕</button></div>
-    <div class="ff"><label>To</label><input id="eTo" type="text" readonly/></div>
-    <div class="ff"><label>Subject</label><input id="eSub" type="text"/></div>
-    <div class="ff"><label>Message</label><textarea id="eBody"></textarea></div>
-    <div style="background:#E8F5E4;border-radius:8px;padding:11px 13px;font-size:.78rem;color:#2D7A27;margin-bottom:4px;">ℹ️ Connect EmailJS or SMTP for real emails. Currently logs to console.</div>
-    <div class="macts"><button class="bcancel" onclick="closeEM()">Cancel</button><button class="bsave" onclick="sendEM()">Send Email ✉️</button></div>
-  </div>
-</div>
-
 <!-- MENU ITEM MODAL -->
 <div class="overlay" id="mMenuItem">
-  <div class="mbox" style="max-width:480px;">
+  <div class="mbox" style="max-width:500px;">
     <div class="mhead"><h2 id="miTitle">Add Menu Item</h2><button class="mclose" onclick="closeMI()">✕</button></div>
     <div class="ff"><label>Item Name *</label><input id="miN" type="text" placeholder="e.g. Chicken Curry"/></div>
     <div class="ff"><label>Description *</label><textarea id="miD" placeholder="Short description" style="min-height:68px"></textarea></div>
     <div class="fg2">
       <div class="ff"><label>Price ($) *</label><input id="miP" type="number" min="0" step="0.01" placeholder="0.00"/></div>
       <div class="ff"><label>Emoji (fallback)</label><input id="miE" type="text" placeholder="🍛" maxlength="4"/></div>
-    </div>
-    <div class="ff">
-      <label>Food Photo</label>
-      <div style="background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:16px;">
-        <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;">
-          <input id="miImgPath" type="text" placeholder="e.g. chicken-biryani.jpg"
-            style="flex:1;padding:10px 13px;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.88rem;background:#fff;outline:none;transition:border-color .2s;"
-            oninput="previewImgPath(this.value)" onfocus="this.style.borderColor='var(--spice)'" onblur="this.style.borderColor='var(--border)'"/>
-          <button type="button" onclick="document.getElementById('miImgFile').click()"
-            style="padding:10px 14px;background:var(--dark);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;white-space:nowrap;transition:opacity .2s;"
-            onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">📁 Browse</button>
-          <input type="file" id="miImgFile" accept="image/*" style="display:none" onchange="handleImgFile(event)"/>
-        </div>
-        <div style="font-size:.75rem;color:var(--muted);margin-bottom:12px;line-height:1.5;">
-          📂 Place your image in the <code style="background:#fff;padding:2px 6px;border-radius:4px;font-size:.75rem;">images/</code> folder, then type the filename above.<br/>
-          Or click <strong>Browse</strong> to pick a file — it will be saved as base64 automatically.
-        </div>
-        <div id="imgPreviewWrap" style="display:none;position:relative;text-align:center;">
-          <img id="imgPreview" class="img-preview" src="" alt="Preview" style="max-height:140px;border-radius:8px;object-fit:cover;width:100%;"/>
-          <button type="button" onclick="removeImg()" title="Remove photo"
-            style="position:absolute;top:-8px;right:-8px;background:var(--red);color:#fff;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:.8rem;">✕</button>
-        </div>
-        <div id="imgPlaceholder" style="text-align:center;padding:8px 0;color:var(--muted);font-size:.82rem;">No photo selected</div>
-      </div>
     </div>
     <div class="fg2">
       <div class="ff"><label>Category *</label>
@@ -342,258 +327,487 @@
         <select id="miT"><option value="veg">🟢 Vegetarian</option><option value="non-veg">🔴 Non-Vegetarian</option></select>
       </div>
     </div>
+    <!-- IMAGE UPLOAD -->
+    <div class="ff">
+      <label>Food Photo</label>
+      <div style="background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:14px;">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
+          <input id="miImgPath" type="text" placeholder="e.g. chicken-biryani.jpg"
+            style="flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.85rem;background:#fff;outline:none;"
+            oninput="previewImgPath(this.value)"/>
+          <button type="button" onclick="document.getElementById('miImgFile').click()"
+            style="padding:9px 14px;background:var(--dark);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.82rem;white-space:nowrap;">📁 Browse</button>
+          <input type="file" id="miImgFile" accept="image/*" style="display:none" onchange="handleImgFile(event)"/>
+        </div>
+        <div style="font-size:.73rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">
+          📂 Place image in <code style="background:#fff;padding:1px 5px;border-radius:3px;">images/</code> folder then type filename, <strong>or</strong> click Browse to upload (stored in Google Sheets).
+        </div>
+        <div id="imgPreviewWrap" style="display:none;position:relative;">
+          <img id="imgPreview" class="img-preview" src="" alt="Preview"/>
+          <button type="button" class="img-remove" onclick="removeImg()">✕</button>
+        </div>
+        <div id="imgPlaceholder" style="color:var(--muted);font-size:.82rem;text-align:center;padding:4px 0;">No photo selected</div>
+      </div>
+    </div>
     <div class="fchk"><input type="checkbox" id="miSp" style="accent-color:var(--spice)"/><label for="miSp">🌶️ Mark as Spicy</label></div>
     <div class="fchk"><input type="checkbox" id="miAv" checked style="accent-color:var(--green)"/><label for="miAv">✅ Available this weekend (visible to customers)</label></div>
-    <div class="macts"><button class="bcancel" onclick="closeMI()">Cancel</button><button class="bsave" onclick="saveMI()">Save Item ✓</button></div>
+    <div class="macts">
+      <button class="bcancel" onclick="closeMI()">Cancel</button>
+      <button class="bsave" id="miSaveBtn" onclick="saveMI()">Save Item ✓</button>
+    </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ── AUTH ──
-const PWD = 'admin123';
-function doLogin(){
-  if(document.getElementById('loginPwd').value===PWD){
-    sessionStorage.setItem('aksA','1');
-    document.getElementById('loginScreen').style.display='none';
-    document.getElementById('adminScreen').style.display='block';
-    loadAdmin();
-  } else { document.getElementById('loginError').style.display='block'; }
+// ════════════════════════════════
+//  CONFIG — replace this URL after deploying your Apps Script
+// ════════════════════════════════
+const SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+
+// ════════════════════════════════
+//  API
+// ════════════════════════════════
+async function apiGet(action) {
+  const res = await fetch(SCRIPT_URL + '?action=' + action);
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.error);
+  return json.data;
 }
-function doLogout(){
-  sessionStorage.removeItem('aksA');
-  document.getElementById('loginScreen').style.display='flex';
-  document.getElementById('adminScreen').style.display='none';
-  document.getElementById('loginPwd').value='';
-}
-document.getElementById('loginPwd').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
-if(sessionStorage.getItem('aksA')){
-  document.getElementById('loginScreen').style.display='none';
-  document.getElementById('adminScreen').style.display='block';
+async function apiPost(body) {
+  const res = await fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.error);
+  return json.data;
 }
 
-// ── TABS ──
-function showTab(t){
-  document.getElementById('pOrders').style.display = t==='orders'?'block':'none';
-  document.getElementById('pMenu').style.display   = t==='menu'  ?'block':'none';
+// ════════════════════════════════
+//  AUTH
+// ════════════════════════════════
+const PWD = 'admin123';
+function doLogin() {
+  if (document.getElementById('loginPwd').value === PWD) {
+    sessionStorage.setItem('aksA','1');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminScreen').style.display = 'block';
+    checkConfig();
+    loadAll();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
+function doLogout() {
+  sessionStorage.removeItem('aksA');
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('adminScreen').style.display = 'none';
+  document.getElementById('loginPwd').value = '';
+}
+document.getElementById('loginPwd').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+if (sessionStorage.getItem('aksA')) {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('adminScreen').style.display = 'block';
+}
+
+// ════════════════════════════════
+//  CONFIG CHECK
+// ════════════════════════════════
+function checkConfig() {
+  const banner = document.getElementById('configBanner');
+  if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+    banner.style.display = 'flex';
+  } else {
+    banner.classList.add('ok');
+    banner.innerHTML = '<div class="cb-icon">✅</div><div><h3>Connected to Google Sheets</h3><p>All orders and menu changes sync in real-time across all devices.</p></div>';
+  }
+}
+
+// ════════════════════════════════
+//  TABS
+// ════════════════════════════════
+function showTab(t) {
+  document.getElementById('pOrders').style.display = t==='orders' ? 'block' : 'none';
+  document.getElementById('pMenu').style.display   = t==='menu'   ? 'block' : 'none';
   document.getElementById('tbOrders').classList.toggle('active', t==='orders');
   document.getElementById('tbMenu').classList.toggle('active',   t==='menu');
-  if(t==='menu')   renderMM();
-  if(t==='orders') loadAdmin();
+  if (t==='menu') loadMenu();
 }
 
-// ── ORDERS ──
-const getO=()=>JSON.parse(localStorage.getItem('aksOrders')||'[]');
-const saveO=o=>localStorage.setItem('aksOrders',JSON.stringify(o));
-let oFilter='all';
-function setOF(f,btn){ oFilter=f; document.querySelectorAll('#pOrders .filter-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderOrders(); }
-function updateStats(){
-  const os=getO(), now=new Date(), ws=new Date(now); ws.setDate(now.getDate()-now.getDay());
-  document.getElementById('stTotal').textContent=os.length;
-  document.getElementById('stNew').textContent=os.filter(o=>o.status==='New').length;
-  document.getElementById('stRev').textContent='$'+os.filter(o=>o.status!=='Cancelled').reduce((s,o)=>s+(o.total||0),0).toFixed(2);
-  document.getElementById('stWknd').textContent=os.filter(o=>{ const d=new Date(o.date); return (d.getDay()===0||d.getDay()===6)&&d>=ws; }).length;
-  document.getElementById('newBadge').textContent=os.filter(o=>o.status==='New').length+' New';
+async function refreshAll() {
+  const btn = document.querySelector('.refresh-btn');
+  btn.textContent = '⏳ Refreshing…';
+  btn.disabled = true;
+  try {
+    if (document.getElementById('pOrders').style.display !== 'none') await loadOrders();
+    else await loadMenu();
+  } finally {
+    btn.textContent = '🔄 Refresh';
+    btn.disabled = false;
+  }
 }
-function renderOrders(){
-  let os=getO(); const s=(document.getElementById('srch').value||'').toLowerCase();
-  if(oFilter!=='all') os=os.filter(o=>o.status===oFilter);
-  if(s) os=os.filter(o=>o.name.toLowerCase().includes(s)||o.id.toLowerCase().includes(s)||o.email.toLowerCase().includes(s));
-  os.sort((a,b)=>new Date(b.placedAt)-new Date(a.placedAt));
-  const tb=document.getElementById('oBody'); document.getElementById('oEmpty').style.display=os.length?'none':'block';
-  if(!os.length){tb.innerHTML='';return;}
-  tb.innerHTML=os.map(o=>{
-    const nm=(o.items||[]).map(i=>i.name).join(', '); const sh=nm.length>38?nm.slice(0,38)+'…':nm;
-    const pl=new Date(o.placedAt); const ps=pl.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' '+pl.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+
+async function loadAll() {
+  await loadOrders();
+}
+
+// ════════════════════════════════
+//  ORDERS
+// ════════════════════════════════
+let ALL_ORDERS = [];
+let oFilter = 'all';
+
+async function loadOrders() {
+  document.getElementById('ordersLoading').style.display = 'block';
+  document.getElementById('ordersTable').style.display = 'none';
+  document.getElementById('oEmpty').style.display = 'none';
+  try {
+    ALL_ORDERS = await apiGet('getOrders');
+    updateStats();
+    renderOrders();
+  } catch(e) {
+    console.error('Orders load failed:', e);
+    document.getElementById('ordersLoading').innerHTML =
+      '<p style="color:var(--red)">⚠️ Could not load orders. Check your SCRIPT_URL configuration.</p>';
+  }
+}
+
+function updateStats() {
+  const now = new Date(), ws = new Date(now);
+  ws.setDate(now.getDate() - now.getDay());
+  document.getElementById('stTotal').textContent = ALL_ORDERS.length;
+  document.getElementById('stNew').textContent   = ALL_ORDERS.filter(o=>o.status==='New').length;
+  document.getElementById('stRev').textContent   = '$'+ALL_ORDERS.filter(o=>o.status!=='Cancelled').reduce((s,o)=>s+(Number(o.total)||0),0).toFixed(2);
+  document.getElementById('stWknd').textContent  = ALL_ORDERS.filter(o=>{const d=new Date(o.date);return(d.getDay()===0||d.getDay()===6)&&d>=ws;}).length;
+  document.getElementById('newBadge').textContent = ALL_ORDERS.filter(o=>o.status==='New').length + ' New';
+}
+
+function setOF(f, btn) {
+  oFilter = f;
+  document.querySelectorAll('#pOrders .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderOrders();
+}
+
+function renderOrders() {
+  let orders = ALL_ORDERS.slice();
+  const s = (document.getElementById('srch').value||'').toLowerCase();
+  if (oFilter !== 'all') orders = orders.filter(o=>o.status===oFilter);
+  if (s) orders = orders.filter(o=>
+    (o.name||'').toLowerCase().includes(s) ||
+    (o.id||'').toLowerCase().includes(s) ||
+    (o.email||'').toLowerCase().includes(s)
+  );
+  orders.sort((a,b) => new Date(b.placedAt) - new Date(a.placedAt));
+
+  document.getElementById('ordersLoading').style.display = 'none';
+  document.getElementById('oEmpty').style.display = orders.length ? 'none' : 'block';
+  document.getElementById('ordersTable').style.display = orders.length ? 'table' : 'none';
+
+  const tb = document.getElementById('oBody');
+  tb.innerHTML = orders.map(o => {
+    const items = Array.isArray(o.items) ? o.items : [];
+    const nm = items.map(i=>i.name).join(', ');
+    const sh = nm.length>38 ? nm.slice(0,38)+'…' : nm;
+    const pl = new Date(o.placedAt);
+    const ps = pl.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' '+pl.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
     return `<tr>
       <td><div class="oid">#${o.id}</div></td>
       <td><div class="cname">${o.name}</div><div class="cemail">${o.email}</div></td>
-      <td><div class="ilist">${sh}</div></td>
-      <td><div class="ototal">$${(o.total||0).toFixed(2)}</div></td>
+      <td><div class="ilist">${sh||'—'}</div></td>
+      <td><div class="ototal">$${Number(o.total||0).toFixed(2)}</div></td>
       <td><div class="ttime">${o.time}</div><div class="tdate">${o.date}</div></td>
       <td><div class="ttime">${ps}</div></td>
       <td><span class="sbadge s-${o.status}">${se(o.status)} ${o.status}</span></td>
       <td><div class="acts">
         <button class="abtn" onclick="viewO('${o.id}')">View</button>
-        <button class="abtn" onclick="cycleS('${o.id}')">Update</button>
-        <button class="abtn" onclick="openEM('${o.id}')">Email</button>
-        <button class="abtn d" onclick="delO('${o.id}')">Delete</button>
+        <button class="abtn" onclick="cycleS('${o.id}', this)">Update</button>
+        <button class="abtn d" onclick="delO('${o.id}', this)">Delete</button>
       </div></td>
     </tr>`;
   }).join('');
 }
-const SC=['New','Confirmed','Ready','Delivered','Cancelled'];
-const se=s=>({New:'🆕',Confirmed:'✅',Ready:'📦',Delivered:'🎉',Cancelled:'❌'}[s]||'');
-function cycleS(id){ const os=getO(); const i=os.findIndex(o=>o.id===id); if(i===-1)return; const c=SC.indexOf(os[i].status); os[i].status=SC[(c+1)%SC.length]; saveO(os); loadAdmin(); toast(`Order #${id} → ${os[i].status}`,'success'); }
-function delO(id){ if(!confirm(`Delete order #${id}?`))return; saveO(getO().filter(o=>o.id!==id)); loadAdmin(); toast('Order deleted','error'); }
-function clearOrders(){ if(!confirm('Delete ALL orders? Cannot be undone!'))return; localStorage.removeItem('aksOrders'); loadAdmin(); toast('All orders cleared','error'); }
-function viewO(id){
-  const o=getO().find(o=>o.id===id); if(!o)return;
-  document.getElementById('mDetailBox').innerHTML=`
-    <div class="mhead"><div><div style="font-size:.73rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px">Order Details</div><h2>#${o.id}</h2></div>
-    <button class="mclose" onclick="document.getElementById('mDetail').classList.remove('show')">✕</button></div>
-    ${dr('👤','Customer',o.name)}${dr('📧','Email',o.email)}${dr('📞','Phone',o.phone)}${dr('📍','Address',o.address)}${dr('📅','Delivery',o.date+' at '+o.time)}
+
+const SC = ['New','Confirmed','Ready','Delivered','Cancelled'];
+const se = s => ({New:'🆕',Confirmed:'✅',Ready:'📦',Delivered:'🎉',Cancelled:'❌'}[s]||'');
+
+async function cycleS(id, btn) {
+  const order = ALL_ORDERS.find(o=>o.id===id); if(!order) return;
+  const cur = SC.indexOf(order.status);
+  const next = SC[(cur+1) % SC.length];
+  btn.disabled = true; btn.textContent = '…';
+  try {
+    await apiPost({ action:'updateOrder', id, status:next });
+    order.status = next;
+    updateStats();
+    renderOrders();
+    toast(`Order #${id} → ${next}`, 'success');
+  } catch(e) {
+    toast('Update failed: ' + e.message, 'error');
+    btn.disabled = false; btn.textContent = 'Update';
+  }
+}
+
+async function delO(id, btn) {
+  if (!confirm(`Delete order #${id}? Cannot be undone.`)) return;
+  btn.disabled = true;
+  try {
+    await apiPost({ action:'deleteOrder', id });
+    ALL_ORDERS = ALL_ORDERS.filter(o=>o.id!==id);
+    updateStats();
+    renderOrders();
+    toast('Order deleted', 'error');
+  } catch(e) {
+    toast('Delete failed: ' + e.message, 'error');
+    btn.disabled = false;
+  }
+}
+
+function viewO(id) {
+  const o = ALL_ORDERS.find(o=>o.id===id); if(!o) return;
+  const items = Array.isArray(o.items) ? o.items : [];
+  document.getElementById('mDetailBox').innerHTML = `
+    <div class="mhead">
+      <div><div style="font-size:.73rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px">Order Details</div><h2>#${o.id}</h2></div>
+      <button class="mclose" onclick="document.getElementById('mDetail').classList.remove('show')">✕</button>
+    </div>
+    ${dr('👤','Customer',o.name)}${dr('📧','Email',o.email)}${dr('📞','Phone',o.phone)}
+    ${dr('📍','Address',o.address)}${dr('📅','Delivery',o.date+' at '+o.time)}
     <div class="drow"><div class="dicon">🍽️</div><div class="dcontent"><h4>Items</h4>
-    ${(o.items||[]).map(i=>`<div class="irow"><span>${i.name}</span><span class="itotal">$${i.price.toFixed(2)}</span></div>`).join('')}
-    <div class="gtotal">Total: $${(o.total||0).toFixed(2)}</div></div></div>
-    ${o.notes?dr('📝','Notes',o.notes):''}
+      ${items.map(i=>`<div class="irow"><span>${i.name}</span><span class="itotal">$${Number(i.price).toFixed(2)}</span></div>`).join('')}
+      <div class="gtotal">Total: $${Number(o.total||0).toFixed(2)}</div>
+    </div></div>
+    ${o.notes ? dr('📝','Notes',o.notes) : ''}
     <div class="drow"><div class="dicon">🔖</div><div class="dcontent"><h4>Status</h4><p><span class="sbadge s-${o.status}">${se(o.status)} ${o.status}</span></p></div></div>`;
   document.getElementById('mDetail').classList.add('show');
 }
-const dr=(ic,lb,v)=>`<div class="drow"><div class="dicon">${ic}</div><div class="dcontent"><h4>${lb}</h4><p>${v}</p></div></div>`;
+const dr = (ic,lb,v) => `<div class="drow"><div class="dicon">${ic}</div><div class="dcontent"><h4>${lb}</h4><p>${v||'—'}</p></div></div>`;
 
-// ── EMAIL ──
-let eTid=null;
-function openEM(id){ const o=getO().find(o=>o.id===id); if(!o)return; eTid=id; document.getElementById('eTo').value=o.email; document.getElementById('eSub').value=`Your A's Kitchen Order #${o.id} — Update`; document.getElementById('eBody').value=`Hi ${o.name},\n\nYour order #${o.id} has been confirmed! 🍽️\n\nItems: ${(o.items||[]).map(i=>i.name).join(', ')}\nTotal: $${(o.total||0).toFixed(2)}\nDelivery: ${o.date} at ${o.time}\n\nWarm regards,\nA's Kitchen 🏠`; document.getElementById('mEmail').classList.add('show'); }
-function closeEM(){ document.getElementById('mEmail').classList.remove('show'); }
-function sendEM(){ const to=document.getElementById('eTo').value,sub=document.getElementById('eSub').value,body=document.getElementById('eBody').value; console.log('📧',{to,sub,body}); const l=JSON.parse(localStorage.getItem('aksEmailLogs')||'[]'); l.push({to,sub,sentAt:new Date().toISOString(),orderId:eTid}); localStorage.setItem('aksEmailLogs',JSON.stringify(l)); closeEM(); toast(`📧 Email sent to ${to}`,'success'); }
-function showEmailSetup(){ alert('1. Sign up at emailjs.com\n2. Connect Gmail/Outlook\n3. Create a template\n4. Add SDK to admin/index.html\n5. Replace console.log in sendEM() with emailjs.send(...)'); }
+// ════════════════════════════════
+//  MENU MANAGER
+// ════════════════════════════════
+let ALL_MENU = [];
+let mf = 'all';
+const CBG = {mains:'#4A2C17',rice:'#2D5A27',sides:'#5A3A6A',desserts:'#7A3A1A'};
 
-// ── MENU MANAGER ──
-const DM=[
-  {id:1, name:"Chicken Biryani",      desc:"Aromatic basmati rice layered with spiced chicken and caramelised onions", price:14.99,emoji:"🍛",cat:"rice",    tag:"non-veg",available:true, image:"../images/chicken-biryani.svg"},
-  {id:2, name:"Lamb Curry",           desc:"Slow-cooked lamb in a rich, deeply spiced masala gravy",                    price:13.99,emoji:"🍖",cat:"mains",  tag:"non-veg",available:true, image:"../images/lamb-curry.svg"},
-  {id:3, name:"Paneer Butter Masala", desc:"Cottage cheese cubes in a velvety tomato-cream sauce",                      price:11.99,emoji:"🧀",cat:"mains",  tag:"veg",    available:true, image:"../images/paneer-butter-masala.svg"},
-  {id:4, name:"Dal Tadka",            desc:"Yellow lentils tempered with cumin, garlic, and dried chillies",             price:8.99, emoji:"🫕",cat:"sides",  tag:"veg",    available:true, image:"../images/dal-tadka.svg"},
-  {id:5, name:"Vegetable Biryani",    desc:"Fragrant basmati with seasonal vegetables and whole spices",                 price:11.99,emoji:"🥘",cat:"rice",   tag:"veg",    available:true, image:"../images/vegetable-biryani.svg"},
-  {id:6, name:"Chicken Curry",        desc:"Classic home-style chicken curry with fresh ground masala",                  price:12.99,emoji:"🍲",cat:"mains",  tag:"non-veg",spicy:true,available:true, image:"../images/chicken-curry.svg"},
-  {id:7, name:"Gulab Jamun",          desc:"Soft milk dumplings soaked in rose-cardamom sugar syrup (6 pieces)",         price:5.99, emoji:"🍮",cat:"desserts",tag:"veg",    available:true, image:"../images/gulab-jamun.svg"},
-  {id:8, name:"Kheer",                desc:"Creamy rice pudding slow-cooked with saffron, cardamom and pistachios",      price:4.99, emoji:"🍚",cat:"desserts",tag:"veg",    available:true, image:"../images/kheer.svg"},
-  {id:9, name:"Raita",                desc:"Cooling yoghurt with cucumber, mint and a hint of cumin",                   price:3.99, emoji:"🥣",cat:"sides",  tag:"veg",    available:true, image:"../images/raita.svg"},
-  {id:10,name:"Garlic Naan",          desc:"Soft flatbread brushed with garlic butter (2 pieces)",                       price:3.49, emoji:"🫓",cat:"sides",  tag:"veg",    available:true, image:"../images/garlic-naan.svg"},
-  {id:11,name:"Fish Curry",           desc:"Coastal-style fish curry with coconut milk and tangy kokum",                 price:13.99,emoji:"🐟",cat:"mains",  tag:"non-veg",spicy:true,available:true, image:"../images/fish-curry.svg"},
-  {id:12,name:"Halwa",                desc:"Semolina pudding with ghee, cashews and saffron",                            price:4.49, emoji:"🍯",cat:"desserts",tag:"veg",    available:true, image:"../images/halwa.svg"},
-];
-const getM=()=>{ const s=localStorage.getItem('aksMenu'); if(s)return JSON.parse(s); localStorage.setItem('aksMenu',JSON.stringify(DM)); return DM; };
-const saveM=m=>localStorage.setItem('aksMenu',JSON.stringify(m));
-const CBG={mains:'#4A2C17',rice:'#2D5A27',sides:'#5A3A6A',desserts:'#7A3A1A'};
-let mf='all';
-function setMF(f,btn){ mf=f; document.querySelectorAll('#pMenu .filter-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderMM(); }
-function renderMM(){
-  const menu=getM(); const items=mf==='all'?menu:menu.filter(m=>m.cat===mf);
-  const g=document.getElementById('mmGrid');
-  if(!items.length){ g.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--muted)">No items in this category.</div>`; return; }
-  g.innerHTML=items.map(it=>`
-    <div class="mc ${it.available===false?'unavail':''}">
+async function loadMenu() {
+  document.getElementById('menuLoading').style.display = 'block';
+  document.getElementById('mmGrid').style.display = 'none';
+  try {
+    ALL_MENU = await apiGet('getMenu');
+    renderMM();
+  } catch(e) {
+    document.getElementById('menuLoading').innerHTML =
+      '<p style="color:var(--red)">⚠️ Could not load menu. Check your SCRIPT_URL configuration.</p>';
+  }
+}
+
+function setMF(f, btn) {
+  mf = f;
+  document.querySelectorAll('#pMenu .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMM();
+}
+
+function renderMM() {
+  document.getElementById('menuLoading').style.display = 'none';
+  document.getElementById('mmGrid').style.display = 'grid';
+  const items = mf==='all' ? ALL_MENU : ALL_MENU.filter(m=>m.cat===mf);
+  const g = document.getElementById('mmGrid');
+  if (!items.length) {
+    g.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--muted)">No items in this category.</div>`;
+    return;
+  }
+  g.innerHTML = items.map(it => `
+    <div class="mc ${it.available===false||it.available==='false'?'unavail':''}">
       <div class="mc-img" style="background:${CBG[it.cat]||'#333'}">
-        ${it.image ? `<img src="${it.image}" alt="${it.name}"/>` : ''}
-        <span class="mc-emoji" style="${it.image?'text-shadow:0 2px 8px rgba(0,0,0,.5);':''}font-size:3rem">${it.emoji||'🍽️'}</span>
-        <span class="avbadge ${it.available!==false?'av-yes':'av-no'}">${it.available!==false?'✅ Available':'⏸ Hidden'}</span>
+        ${it.image ? `<img src="${it.image}" alt="${it.name}" onerror="this.style.display='none'"/>` : ''}
+        <span class="mc-emoji">${it.image ? '' : (it.emoji||'🍽️')}</span>
+        <span class="avbadge ${it.available!==false&&it.available!=='false'?'av-yes':'av-no'}">${it.available!==false&&it.available!=='false'?'✅ Available':'⏸ Hidden'}</span>
       </div>
       <div class="mc-body">
-        <div class="mc-top"><div class="mc-name">${it.name}</div><div class="mc-price">$${it.price.toFixed(2)}</div></div>
+        <div class="mc-top"><div class="mc-name">${it.name}</div><div class="mc-price">$${Number(it.price).toFixed(2)}</div></div>
         <div class="mc-desc">${it.desc}</div>
         <div class="mc-tags">
           <span class="tpill ${it.tag==='veg'?'tv':'tnv'}">${it.tag==='veg'?'🟢 Veg':'🔴 Non-Veg'}</span>
           <span class="tpill tcat">${it.cat}</span>
-          ${it.spicy?'<span class="tpill tsp">🌶 Spicy</span>':''}
+          ${it.spicy&&it.spicy!=='false'?'<span class="tpill tsp">🌶 Spicy</span>':''}
         </div>
         <div class="mc-acts">
           <button class="mc-edit" onclick="openMI(${it.id})">✏️ Edit</button>
-          <button class="mc-tog" onclick="toggleAv(${it.id})">${it.available!==false?'⏸ Hide':'▶ Show'}</button>
-          <button class="mc-del" onclick="delMI(${it.id})">🗑</button>
+          <button class="mc-tog" onclick="toggleAv(${it.id}, this)">${it.available!==false&&it.available!=='false'?'⏸ Hide':'▶ Show'}</button>
+          <button class="mc-del" onclick="delMI(${it.id}, this)">🗑</button>
         </div>
       </div>
     </div>`).join('');
 }
-let eid=null;
-function openMI(id){
-  eid=id; document.getElementById('miTitle').textContent=id?'Edit Menu Item':'Add New Item';
-  if(id){ const it=getM().find(m=>m.id===id); if(!it)return;
-    document.getElementById('miN').value=it.name; document.getElementById('miD').value=it.desc;
-    document.getElementById('miP').value=it.price; document.getElementById('miE').value=it.emoji||'';
-    document.getElementById('miC').value=it.cat; document.getElementById('miT').value=it.tag;
-    document.getElementById('miSp').checked=!!it.spicy; document.getElementById('miAv').checked=it.available!==false;
-    // Restore image — detect if it's a path or base64
-    const isSrc = it.image && it.image.startsWith('data:');
-    const isPath = it.image && !isSrc;
-    document.getElementById('miImgPath').value = isPath ? it.image.replace('../images/','') : (it.imagePath||'');
+
+// ── MENU ITEM MODAL ──
+let eid = null;
+
+function openMI(id) {
+  eid = id;
+  document.getElementById('miTitle').textContent = id ? 'Edit Menu Item' : 'Add New Item';
+  if (id) {
+    const it = ALL_MENU.find(m=>m.id===id||Number(m.id)===id); if(!it) return;
+    document.getElementById('miN').value = it.name;
+    document.getElementById('miD').value = it.desc;
+    document.getElementById('miP').value = it.price;
+    document.getElementById('miE').value = it.emoji||'';
+    document.getElementById('miC').value = it.cat;
+    document.getElementById('miT').value = it.tag;
+    document.getElementById('miSp').checked = it.spicy===true||it.spicy==='true';
+    document.getElementById('miAv').checked = it.available!==false&&it.available!=='false';
+    // Image
+    const isPath = it.image && !it.image.startsWith('data:');
+    document.getElementById('miImgPath').value = isPath ? it.image.replace('../images/','') : '';
     setImgPreview(it.image||null);
   } else {
-    ['miN','miD','miP'].forEach(i=>document.getElementById(i).value='');
-    document.getElementById('miE').value='🍽️'; document.getElementById('miC').value='mains';
-    document.getElementById('miT').value='veg'; document.getElementById('miSp').checked=false; document.getElementById('miAv').checked=true;
+    ['miN','miD','miP','miImgPath'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('miE').value='🍽️';
+    document.getElementById('miC').value='mains';
+    document.getElementById('miT').value='veg';
+    document.getElementById('miSp').checked=false;
+    document.getElementById('miAv').checked=true;
     setImgPreview(null);
-    document.getElementById('miImgPath').value='';
     document.getElementById('miImgFile').value='';
   }
   document.getElementById('mMenuItem').classList.add('show');
 }
-function closeMI(){ document.getElementById('mMenuItem').classList.remove('show'); eid=null; }
-function saveMI(){
-  const n=document.getElementById('miN').value.trim(), d=document.getElementById('miD').value.trim(),
-        p=parseFloat(document.getElementById('miP').value), e=document.getElementById('miE').value.trim()||'🍽️',
-        c=document.getElementById('miC').value, t=document.getElementById('miT').value,
-        sp=document.getElementById('miSp').checked, av=document.getElementById('miAv').checked;
-  const imgEl=document.getElementById('imgPreview');
-  const imgPath=document.getElementById('miImgPath').value.trim();
-  // Store relative path if typed, or base64 if uploaded via Browse, or null
-  const image = imgEl && imgEl.src && imgEl.src !== window.location.href
-    ? (imgEl.src.startsWith('data:') ? imgEl.src : (imgPath ? '../images/'+imgPath.replace(/^.*[\\/]/,'') : null))
-    : null;
-  if(!n||!d||isNaN(p)||p<0){ toast('Please fill in all required fields.','error'); return; }
-  const menu=getM();
-  if(eid){ const i=menu.findIndex(m=>m.id===eid); if(i!==-1) menu[i]={...menu[i],name:n,desc:d,price:p,emoji:e,cat:c,tag:t,spicy:sp,available:av,image}; toast(`✅ "${n}" updated`,'success'); }
-  else { const nid=Math.max(0,...menu.map(m=>m.id))+1; menu.push({id:nid,name:n,desc:d,price:p,emoji:e,cat:c,tag:t,spicy:sp,available:av,image}); toast(`✅ "${n}" added`,'success'); }
-  saveM(menu); closeMI(); renderMM();
+
+function closeMI() {
+  document.getElementById('mMenuItem').classList.remove('show');
+  eid = null;
 }
-// Image helpers
-function handleImgFile(e){
-  const file=e.target.files[0]; if(!file)return;
-  if(file.size>5*1024*1024){ toast('Image too large — max 5MB','error'); return; }
-  // Suggest filename based on item name
-  const n=document.getElementById('miN').value.trim();
-  const ext=file.name.split('.').pop().toLowerCase()||'jpg';
-  const suggested=n ? n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')+'.'+ext : file.name;
-  document.getElementById('miImgPath').value=suggested;
-  // Read as base64 so it works even without a server
-  const reader=new FileReader();
-  reader.onload=ev=>setImgPreview(ev.target.result, suggested);
+
+async function saveMI() {
+  const n  = document.getElementById('miN').value.trim();
+  const d  = document.getElementById('miD').value.trim();
+  const p  = parseFloat(document.getElementById('miP').value);
+  const e  = document.getElementById('miE').value.trim()||'🍽️';
+  const c  = document.getElementById('miC').value;
+  const t  = document.getElementById('miT').value;
+  const sp = document.getElementById('miSp').checked;
+  const av = document.getElementById('miAv').checked;
+  const imgPath = document.getElementById('miImgPath').value.trim();
+  const imgEl   = document.getElementById('imgPreview');
+  // Prefer base64 if browsed, else use path relative to root images/
+  const image = imgEl && imgEl.src && imgEl.src.startsWith('data:')
+    ? imgEl.src
+    : (imgPath ? 'images/'+imgPath.replace(/^.*[\\/]/,'') : '');
+
+  if (!n||!d||isNaN(p)||p<0) { toast('Please fill in all required fields.','error'); return; }
+
+  const btn = document.getElementById('miSaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  const item = { name:n, desc:d, price:p, emoji:e, cat:c, tag:t, spicy:sp, available:av, image };
+  if (eid) item.id = eid;
+
+  try {
+    const res = await apiPost({ action:'saveMenuItem', item });
+    if (!eid) item.id = res.id;
+
+    if (eid) {
+      const idx = ALL_MENU.findIndex(m=>Number(m.id)===Number(eid));
+      if (idx!==-1) ALL_MENU[idx] = {...ALL_MENU[idx], ...item};
+    } else {
+      ALL_MENU.push(item);
+    }
+    closeMI();
+    renderMM();
+    toast(`✅ "${n}" ${eid?'updated':'added'}`, 'success');
+  } catch(err) {
+    toast('Save failed: '+err.message, 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Save Item ✓';
+  }
+}
+
+async function toggleAv(id, btn) {
+  const it = ALL_MENU.find(m=>Number(m.id)===Number(id)); if(!it) return;
+  const newVal = !(it.available!==false&&it.available!=='false');
+  btn.disabled = true;
+  try {
+    await apiPost({ action:'saveMenuItem', item:{...it, available:newVal} });
+    it.available = newVal;
+    renderMM();
+    toast(`${it.name} is now ${newVal?'visible ✅':'hidden ⏸'}`, 'success');
+  } catch(e) {
+    toast('Update failed: '+e.message, 'error');
+    btn.disabled = false;
+  }
+}
+
+async function delMI(id, btn) {
+  const it = ALL_MENU.find(m=>Number(m.id)===Number(id));
+  if (!confirm(`Delete "${it?.name}"? Cannot be undone.`)) return;
+  btn.disabled = true;
+  try {
+    await apiPost({ action:'deleteMenuItem', id });
+    ALL_MENU = ALL_MENU.filter(m=>Number(m.id)!==Number(id));
+    renderMM();
+    toast(`"${it?.name}" deleted`, 'error');
+  } catch(e) {
+    toast('Delete failed: '+e.message, 'error');
+    btn.disabled = false;
+  }
+}
+
+// ── IMAGE HELPERS ──
+function handleImgFile(e) {
+  const file = e.target.files[0]; if(!file) return;
+  if (file.size > 5*1024*1024) { toast('Image too large — max 5MB','error'); return; }
+  const n = document.getElementById('miN').value.trim();
+  const ext = file.name.split('.').pop().toLowerCase()||'jpg';
+  const suggested = n ? n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')+'.'+ext : file.name;
+  document.getElementById('miImgPath').value = suggested;
+  const reader = new FileReader();
+  reader.onload = ev => setImgPreview(ev.target.result);
   reader.readAsDataURL(file);
-  toast('📷 Image loaded. Place the file in the images/ folder as: '+suggested,'success');
+  toast('📷 Preview ready. File will be stored in Google Sheets.','success');
 }
-function previewImgPath(val){
-  if(!val){ setImgPreview(null); return; }
-  // Try to load from images/ folder path
-  const src='../images/'+val.replace(/^.*[\\/]/,'');
-  const img=new Image();
-  img.onload=()=>setImgPreview(src, val);
-  img.onerror=()=>{ setImgPreview(null); };
-  img.src=src;
+function previewImgPath(val) {
+  if (!val) { setImgPreview(null); return; }
+  const src = '../images/' + val.replace(/^.*[\\/]/,'');
+  const img = new Image();
+  img.onload  = () => setImgPreview(src);
+  img.onerror = () => setImgPreview(null);
+  img.src = src;
 }
-function setImgPreview(src, path){
-  const ph=document.getElementById('imgPlaceholder'), pw=document.getElementById('imgPreviewWrap'), pr=document.getElementById('imgPreview');
-  if(src){ pr.src=src; ph.style.display='none'; pw.style.display='block'; }
-  else { pr.src=''; ph.style.display='block'; pw.style.display='none'; }
-  if(path) document.getElementById('miImgPath').value=path;
+function setImgPreview(src) {
+  const ph = document.getElementById('imgPlaceholder');
+  const pw = document.getElementById('imgPreviewWrap');
+  const pr = document.getElementById('imgPreview');
+  if (src) { pr.src=src; ph.style.display='none'; pw.style.display='block'; }
+  else     { pr.src='';  ph.style.display='block'; pw.style.display='none'; }
 }
-function removeImg(){ setImgPreview(null); document.getElementById('miImgPath').value=''; document.getElementById('miImgFile').value=''; }
-function toggleAv(id){ const m=getM(); const i=m.findIndex(x=>x.id===id); if(i===-1)return; m[i].available=!m[i].available; saveM(m); renderMM(); toast(`${m[i].name} is now ${m[i].available?'visible ✅':'hidden ⏸'}`,'success'); }
-function delMI(id){ const it=getM().find(m=>m.id===id); if(!confirm(`Delete "${it?.name}"?`))return; saveM(getM().filter(m=>m.id!==id)); renderMM(); toast(`"${it?.name}" deleted`,'error'); }
-
-// ── TOAST ──
-function toast(msg,type=''){ const t=document.getElementById('toast'); t.textContent=msg; t.className='toast show '+type; setTimeout(()=>t.className='toast',3000); }
-
-// ── INIT ──
-function loadAdmin(){ updateStats(); renderOrders(); }
-function seedDemo(){
-  if(getO().length>0)return;
-  const now=new Date(), ns=new Date(now); ns.setDate(now.getDate()+((6-now.getDay()+7)%7||7));
-  const ds=ns.toISOString().split('T')[0];
-  saveO([
-    {id:'AK100001',name:'Sarah Johnson',email:'sarah@example.com',phone:'555-0101',address:'123 Main St',date:ds,time:'12:00',notes:'Extra spicy!',items:[{name:'Chicken Biryani',price:14.99},{name:'Raita',price:3.99}],total:18.98,status:'New',placedAt:new Date(Date.now()-3600000).toISOString()},
-    {id:'AK100002',name:'Mike Chen',    email:'mike@example.com', phone:'555-0102',address:'456 Oak Ave', date:ds,time:'13:00',notes:'Nut allergy', items:[{name:'Paneer Butter Masala',price:11.99},{name:'Garlic Naan',price:3.49},{name:'Gulab Jamun',price:5.99}],total:21.47,status:'Confirmed',placedAt:new Date(Date.now()-7200000).toISOString()},
-    {id:'AK100003',name:'Emma Wilson',  email:'emma@example.com', phone:'555-0103',address:'789 Pine Rd', date:ds,time:'14:00',notes:'',           items:[{name:'Lamb Curry',price:13.99},{name:'Vegetable Biryani',price:11.99}],total:25.98,status:'Ready',placedAt:new Date(Date.now()-10800000).toISOString()},
-  ]);
+function removeImg() {
+  setImgPreview(null);
+  document.getElementById('miImgPath').value='';
+  document.getElementById('miImgFile').value='';
 }
 
-// Auto-detect new orders
-let lc=getO().length;
-setInterval(()=>{ const os=getO(); if(os.length>lc){ const o=os[os.length-1]; toast(`🔔 New order #${o.id} from ${o.name}!`,'success'); lc=os.length; if(document.getElementById('pOrders').style.display!=='none') loadAdmin(); } },3000);
+// ════════════════════════════════
+//  TOAST
+// ════════════════════════════════
+function toast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast show '+type;
+  setTimeout(()=>t.className='toast', 3500);
+}
 
-seedDemo();
-loadAdmin();
+// ════════════════════════════════
+//  INIT
+// ════════════════════════════════
+if (sessionStorage.getItem('aksA')) {
+  checkConfig();
+  loadAll();
+}
 </script>
 </body>
 </html>
