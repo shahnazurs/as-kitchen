@@ -862,18 +862,27 @@
 
 <script>
 // ── GOOGLE SHEETS CONFIG ──
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxUize4bICnNFHDO1_ZG9sdgmXPpL9ovuExAUaL22BZGPSXosoVelvZ0-_DvZR_wFti/exec'; // ← replace after deploying Apps Script
+const SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE'; // ← replace after deploying Apps Script
 
 // ── API ──
 async function apiGet(action) {
-  const res = await fetch(SCRIPT_URL + '?action=' + action);
-  const json = await res.json();
+  const res = await fetch(SCRIPT_URL + '?action=' + action, {
+    method: 'GET',
+    redirect: 'follow'
+  });
+  const text = await res.text();
+  const json = JSON.parse(text);
   if (!json.ok) throw new Error(json.error);
   return json.data;
 }
 async function apiPost(body) {
-  const res = await fetch(SCRIPT_URL, { method:'POST', body:JSON.stringify(body) });
-  const json = await res.json();
+  const res = await fetch(SCRIPT_URL, {
+    method: 'POST',
+    redirect: 'follow',
+    body: JSON.stringify(body)
+  });
+  const text = await res.text();
+  const json = JSON.parse(text);
   if (!json.ok) throw new Error(json.error);
   return json.data;
 }
