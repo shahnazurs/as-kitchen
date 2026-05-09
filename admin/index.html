@@ -202,6 +202,23 @@
     @media(max-width:900px){
       .stats-row{grid-template-columns:1fr 1fr;}
       .admin-body{padding:16px;}
+      /* Hide desktop table on mobile */
+      .orders-wrap table, .orders-wrap thead { display:none; }
+      /* Show card list instead */
+      .order-cards { display:flex !important; flex-direction:column; gap:12px; padding:12px; }
+      .order-card {
+        background:#fff; border-radius:12px; border:1px solid var(--border);
+        padding:16px; display:flex; flex-direction:column; gap:10px;
+      }
+      .order-card-top { display:flex; justify-content:space-between; align-items:start; gap:8px; }
+      .order-card-id { font-family:'Playfair Display',serif; font-weight:700; color:var(--spice); font-size:1rem; }
+      .order-card-time { font-size:.75rem; color:var(--muted); text-align:right; }
+      .order-card-name { font-weight:600; font-size:.95rem; }
+      .order-card-email { font-size:.78rem; color:var(--muted); }
+      .order-card-items { font-size:.8rem; color:var(--muted); line-height:1.5; }
+      .order-card-bottom { display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+      .order-card-total { font-family:'Playfair Display',serif; font-weight:700; color:var(--green); font-size:1.1rem; }
+      .order-card-actions { display:flex; gap:6px; }
       /* Mobile nav — move tabs to bottom bar */
       .nav-tabs{ display:none; }
       .mobile-tabs{
@@ -295,7 +312,7 @@
       <div class="cb-icon">⚙️</div>
       <div>
         <h3>Google Sheets Setup Required</h3>
-        <p>Open <code>admin/index.html</code> and <code>index.html</code>, find <code>https://script.google.com/macros/s/AKfycbxch3BPMWCJ9ssuheMaknPNaTAoULh1j47lek9WqVl8nUuYnVXe81qaLYGypDb6sA92/exec</code> and replace it with your deployed Apps Script Web App URL.<br/>
+        <p>Open <code>admin/index.html</code> and <code>index.html</code>, find <code>https://script.google.com/macros/s/AKfycbzHfl__dztld9evWHSbLmeq-k2I90C5-HAV7FBWKUyNGOKpKz76AL9up3f28YpllH0/exec</code> and replace it with your deployed Apps Script Web App URL.<br/>
         See <code>google-apps-script/SETUP.md</code> for step-by-step instructions.</p>
       </div>
     </div>
@@ -323,6 +340,7 @@
 
       <div class="orders-wrap">
         <div class="loading" id="ordersLoading"><div class="spinner"></div><br/>Loading orders from Google Sheets…</div>
+        <!-- Desktop table -->
         <table id="ordersTable" style="display:none">
           <thead><tr>
             <th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th>
@@ -330,6 +348,8 @@
           </tr></thead>
           <tbody id="oBody"></tbody>
         </table>
+        <!-- Mobile cards -->
+        <div class="order-cards" id="oCards" style="display:none"></div>
         <div class="empty" id="oEmpty" style="display:none">
           <div class="eicon">🍽️</div>
           <h3 style="font-family:'Playfair Display',serif;margin-bottom:8px;">No orders yet</h3>
@@ -420,7 +440,7 @@
 
 <script>
 // ── API via JSONP ──
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxch3BPMWCJ9ssuheMaknPNaTAoULh1j47lek9WqVl8nUuYnVXe81qaLYGypDb6sA92/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzHfl__dztld9evWHSbLmeq-k2I90C5-HAV7FBWKUyNGOKpKz76AL9up3f28YpllH0/exec';
 
 function jsonp(params) {
   return new Promise((resolve, reject) => {
@@ -511,7 +531,7 @@ if (sessionStorage.getItem('aksA')) {
 // ════════════════════════════════
 function checkConfig() {
   const banner = document.getElementById('configBanner');
-  if (!SCRIPT_URL || SCRIPT_URL.includes('https://script.google.com/macros/s/AKfycbxch3BPMWCJ9ssuheMaknPNaTAoULh1j47lek9WqVl8nUuYnVXe81qaLYGypDb6sA92/exec')) {
+  if (!SCRIPT_URL || SCRIPT_URL.includes('YOUR_APPS_SCRIPT')) {
     banner.style.display = 'flex';
   } else {
     banner.classList.add('ok');
@@ -605,7 +625,12 @@ function renderOrders() {
   document.getElementById('ordersLoading').style.display = 'none';
   document.getElementById('oEmpty').style.display = orders.length ? 'none' : 'block';
   document.getElementById('ordersTable').style.display = orders.length ? 'table' : 'none';
+  document.getElementById('oCards').style.display = orders.length ? 'flex' : 'none';
 
+  const statusOpts = ['New','Confirmed','Ready','Delivered','Cancelled']
+    .map(s => `<option value="${s}">${se(s)} ${s}</option>`).join('');
+
+  // ── Desktop table rows ──
   const tb = document.getElementById('oBody');
   tb.innerHTML = orders.map(o => {
     const items = Array.isArray(o.items) ? o.items : [];
@@ -632,6 +657,42 @@ function renderOrders() {
         <button class="abtn d" onclick="delO('${o.id}', this)">Delete</button>
       </div></td>
     </tr>`;
+  }).join('');
+
+  // ── Mobile cards ──
+  const cards = document.getElementById('oCards');
+  cards.innerHTML = orders.map(o => {
+    const items = Array.isArray(o.items) ? o.items : [];
+    const nm    = items.map(i=>i.name).join(', ');
+    const pl    = new Date(o.placedAt);
+    const ps    = pl.toLocaleDateString('en-US',{month:'short',day:'numeric'}) + ' ' +
+                  pl.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+    return `
+    <div class="order-card">
+      <div class="order-card-top">
+        <div>
+          <div class="order-card-id">#${o.id}</div>
+          <div class="order-card-name">${o.name}</div>
+          <div class="order-card-email">${o.email} · ${o.phone||''}</div>
+        </div>
+        <div class="order-card-time">${o.date}<br/>${o.time}<br/><span style="opacity:.6">${ps}</span></div>
+      </div>
+      <div class="order-card-items">🍽️ ${nm||'—'}</div>
+      ${o.address ? `<div class="order-card-items">📍 ${o.address}</div>` : ''}
+      ${o.notes   ? `<div class="order-card-items">📝 ${o.notes}</div>`   : ''}
+      <div class="order-card-bottom">
+        <div class="order-card-total">$${Number(o.total||0).toFixed(2)}</div>
+        <select class="status-select s-${o.status}" onchange="changeStatus('${o.id}', this)">
+          ${['New','Confirmed','Ready','Delivered','Cancelled'].map(s =>
+            `<option value="${s}" ${s===o.status?'selected':''}>${se(s)} ${s}</option>`
+          ).join('')}
+        </select>
+        <div class="order-card-actions">
+          <button class="abtn" onclick="viewO('${o.id}')">✏️ Edit</button>
+          <button class="abtn d" onclick="delO('${o.id}', this)">🗑</button>
+        </div>
+      </div>
+    </div>`;
   }).join('');
 }
 
