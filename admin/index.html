@@ -614,6 +614,7 @@ function setOF(f, btn) {
 function renderOrders() {
   let orders = ALL_ORDERS.slice();
   const s = (document.getElementById('srch').value||'').toLowerCase();
+  const isMobile = window.innerWidth <= 900;
   if (oFilter !== 'all') orders = orders.filter(o=>o.status===oFilter);
   if (s) orders = orders.filter(o=>
     (o.name||'').toLowerCase().includes(s) ||
@@ -624,7 +625,8 @@ function renderOrders() {
 
   document.getElementById('ordersLoading').style.display = 'none';
   document.getElementById('oEmpty').style.display = orders.length ? 'none' : 'block';
-  document.getElementById('ordersTable').style.display = orders.length ? 'table' : 'none';
+  document.getElementById('ordersTable').style.display = (!isMobile && orders.length) ? 'table' : 'none';
+document.getElementById('oCards').style.display = (isMobile && orders.length) ? 'flex' : 'none';
   document.getElementById('oCards').style.display = orders.length ? 'flex' : 'none';
 
   const statusOpts = ['New','Confirmed','Ready','Delivered','Cancelled']
