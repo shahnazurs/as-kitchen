@@ -237,7 +237,7 @@
       <div class="cb-icon">⚙️</div>
       <div>
         <h3>Google Sheets Setup Required</h3>
-        <p>Open <code>admin/index.html</code> and <code>index.html</code>, find <code>YOUR_APPS_SCRIPT_URL_HERE</code> and replace it with your deployed Apps Script Web App URL.<br/>
+        <p>Open <code>admin/index.html</code> and <code>index.html</code>, find <code>https://script.google.com/macros/s/AKfycbxU0-CgibXmqTfBcBOOtsoeE5cBazTyFGQ028RZoQmtU-2IIrZjmJ59p26fs2RXu4g/exec</code> and replace it with your deployed Apps Script Web App URL.<br/>
         See <code>google-apps-script/SETUP.md</code> for step-by-step instructions.</p>
       </div>
     </div>
@@ -364,7 +364,7 @@
 // ════════════════════════════════
 //  CONFIG — replace this URL after deploying your Apps Script
 // ════════════════════════════════
-const SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxU0-CgibXmqTfBcBOOtsoeE5cBazTyFGQ028RZoQmtU-2IIrZjmJ59p26fs2RXu4g/exec';
 
 // ════════════════════════════════
 //  API
@@ -423,7 +423,7 @@ if (sessionStorage.getItem('aksA')) {
 // ════════════════════════════════
 function checkConfig() {
   const banner = document.getElementById('configBanner');
-  if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+  if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbxU0-CgibXmqTfBcBOOtsoeE5cBazTyFGQ028RZoQmtU-2IIrZjmJ59p26fs2RXu4g/exec') {
     banner.style.display = 'flex';
   } else {
     banner.classList.add('ok');
