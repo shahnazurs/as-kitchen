@@ -106,6 +106,13 @@
     .abtn:hover{background:var(--dark);color:#fff;border-color:var(--dark);}
     .abtn.d:hover{background:var(--red);border-color:var(--red);color:#fff;}
     .abtn:disabled{opacity:.4;cursor:not-allowed;}
+    .status-select{padding:4px 8px;border-radius:6px;border:1.5px solid var(--border);background:#fff;font-family:'DM Sans',sans-serif;font-size:.73rem;font-weight:500;color:var(--text);cursor:pointer;outline:none;transition:border-color .2s;}
+    .status-select:focus{border-color:var(--spice);}
+    .status-select.s-New{border-color:#93C5FD;background:var(--blue-bg);color:var(--blue);}
+    .status-select.s-Confirmed{border-color:#86EFAC;background:var(--green-bg);color:var(--green);}
+    .status-select.s-Ready{border-color:#FCD34D;background:#FEF3E2;color:#D4781A;}
+    .status-select.s-Delivered{border-color:#D1D5DB;background:#F0F0F0;color:#555;}
+    .status-select.s-Cancelled{border-color:#FCA5A5;background:var(--red-bg);color:var(--red);}
     .empty{padding:60px 24px;text-align:center;color:var(--muted);}
     .eicon{font-size:3rem;margin-bottom:16px;}
 
@@ -288,7 +295,7 @@
       <div class="cb-icon">⚙️</div>
       <div>
         <h3>Google Sheets Setup Required</h3>
-        <p>Open <code>admin/index.html</code> and <code>index.html</code>, find <code>https://script.google.com/macros/s/AKfycbxch3BPMWCJ9ssuheMaknPNaTAoULh1j47lek9WqVl8nUuYnVXe81qaLYGypDb6sA92/exec</code> and replace it with your deployed Apps Script Web App URL.<br/>
+        <p>Open <code>admin/index.html</code> and <code>index.html</code>, find <code>https://script.google.com/macros/s/AKfycbzHfl__dztld9evWHSbLmeq-k2I90C5-HAV7FBWKUyNGOKpKz76AL9up3f28YpllH0/exec</code> and replace it with your deployed Apps Script Web App URL.<br/>
         See <code>google-apps-script/SETUP.md</code> for step-by-step instructions.</p>
       </div>
     </div>
@@ -413,7 +420,7 @@
 
 <script>
 // ── API via JSONP ──
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxch3BPMWCJ9ssuheMaknPNaTAoULh1j47lek9WqVl8nUuYnVXe81qaLYGypDb6sA92/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzHfl__dztld9evWHSbLmeq-k2I90C5-HAV7FBWKUyNGOKpKz76AL9up3f28YpllH0/exec';
 
 function jsonp(params) {
   return new Promise((resolve, reject) => {
@@ -504,7 +511,7 @@ if (sessionStorage.getItem('aksA')) {
 // ════════════════════════════════
 function checkConfig() {
   const banner = document.getElementById('configBanner');
-  if (!SCRIPT_URL || SCRIPT_URL.includes('https://script.google.com/macros/s/AKfycbxch3BPMWCJ9ssuheMaknPNaTAoULh1j47lek9WqVl8nUuYnVXe81qaLYGypDb6sA92/exec')) {
+  if (!SCRIPT_URL || SCRIPT_URL.includes('YOUR_APPS_SCRIPT')) {
     banner.style.display = 'flex';
   } else {
     banner.classList.add('ok');
@@ -613,10 +620,15 @@ function renderOrders() {
       <td><div class="ototal">$${Number(o.total||0).toFixed(2)}</div></td>
       <td><div class="ttime">${o.time}</div><div class="tdate">${o.date}</div></td>
       <td><div class="ttime">${ps}</div></td>
-      <td><span class="sbadge s-${o.status}">${se(o.status)} ${o.status}</span></td>
+      <td>
+        <select class="status-select s-${o.status}" onchange="changeStatus('${o.id}', this)">
+          ${['New','Confirmed','Ready','Delivered','Cancelled'].map(s =>
+            `<option value="${s}" ${s===o.status?'selected':''}>${se(s)} ${s}</option>`
+          ).join('')}
+        </select>
+      </td>
       <td><div class="acts">
-        <button class="abtn" onclick="viewO('${o.id}')">View</button>
-        <button class="abtn" onclick="cycleS('${o.id}', this)">Update</button>
+        <button class="abtn" onclick="viewO('${o.id}')">✏️ Edit</button>
         <button class="abtn d" onclick="delO('${o.id}', this)">Delete</button>
       </div></td>
     </tr>`;
@@ -627,19 +639,28 @@ const SC = ['New','Confirmed','Ready','Delivered','Cancelled'];
 const se = s => ({New:'🆕',Confirmed:'✅',Ready:'📦',Delivered:'🎉',Cancelled:'❌'}[s]||'');
 
 async function cycleS(id, btn) {
-  const order = ALL_ORDERS.find(o=>o.id===id); if(!order) return;
-  const cur = SC.indexOf(order.status);
-  const next = SC[(cur+1) % SC.length];
-  btn.disabled = true; btn.textContent = '…';
+  // kept for compatibility — not used in UI anymore
+}
+
+async function changeStatus(id, sel) {
+  const status = sel.value;
+  const order  = ALL_ORDERS.find(o=>o.id===id); if(!order) return;
+  const prev   = order.status;
+  // Optimistically update UI class
+  sel.className = 'status-select s-' + status;
+  sel.disabled  = true;
   try {
-    await apiPost({ action:'updateOrder', id, status:next });
-    order.status = next;
+    await apiPost({ action:'updateOrder', id, status });
+    order.status = status;
     updateStats();
-    renderOrders();
-    toast(`Order #${id} → ${next}`, 'success');
+    toast(`Order #${id} → ${status}`, 'success');
   } catch(e) {
+    // Revert on failure
+    sel.value     = prev;
+    sel.className = 'status-select s-' + prev;
     toast('Update failed: ' + e.message, 'error');
-    btn.disabled = false; btn.textContent = 'Update';
+  } finally {
+    sel.disabled = false;
   }
 }
 
