@@ -8,34 +8,30 @@ const SHEET_ID   = 'YOUR_GOOGLE_SHEET_ID_HERE'; // ← paste your Sheet ID
 const MENU_TAB   = 'Menu';
 const ORDERS_TAB = 'Orders';
 
-// ── Column definitions ──
-const MENU_COLS   = ['id','name','desc','price','emoji','cat','tag','spicy','available','image'];
-const ORDER_COLS  = ['id','name','email','phone','address','date','time','items','total','notes','status','placedAt'];
+const MENU_COLS  = ['id','name','desc','price','emoji','cat','tag','spicy','available','image'];
+const ORDER_COLS = ['id','name','email','phone','address','date','time','items','total','notes','status','placedAt'];
 
 // ════════════════════════════════
-//  ROUTER
+//  SINGLE ROUTER — everything via GET
+//  Browser sends:  ?action=getMenu
+//  Browser sends:  ?action=saveMenuItem&payload={"name":...}
 // ════════════════════════════════
 function doGet(e) {
-  const action = e.parameter.action;
-  try {
-    if (action === 'getMenu')   return ok(getMenu());
-    if (action === 'getOrders') return ok(getOrders());
-    return err('Unknown action: ' + action);
-  } catch(ex) {
-    return err(ex.toString());
-  }
-}
+  const action  = e.parameter.action;
+  const payload = e.parameter.payload ? JSON.parse(e.parameter.payload) : {};
 
-function doPost(e) {
-  const body = JSON.parse(e.postData.contents);
-  const action = body.action;
   try {
-    if (action === 'saveMenu')      return ok(saveMenu(body.menu));
-    if (action === 'saveMenuItem')  return ok(saveMenuItem(body.item));
-    if (action === 'deleteMenuItem')return ok(deleteMenuItem(body.id));
-    if (action === 'placeOrder')    return ok(placeOrder(body.order));
-    if (action === 'updateOrder')   return ok(updateOrder(body.id, body.status));
-    if (action === 'deleteOrder')   return ok(deleteOrder(body.id));
+    // READ actions
+    if (action === 'getMenu')         return ok(getMenu());
+    if (action === 'getOrders')       return ok(getOrders());
+
+    // WRITE actions (payload passed as URL param)
+    if (action === 'saveMenuItem')    return ok(saveMenuItem(payload.item));
+    if (action === 'deleteMenuItem')  return ok(deleteMenuItem(payload.id));
+    if (action === 'placeOrder')      return ok(placeOrder(payload.order));
+    if (action === 'updateOrder')     return ok(updateOrder(payload.id, payload.status));
+    if (action === 'deleteOrder')     return ok(deleteOrder(payload.id));
+
     return err('Unknown action: ' + action);
   } catch(ex) {
     return err(ex.toString());
@@ -43,7 +39,7 @@ function doPost(e) {
 }
 
 // ════════════════════════════════
-//  HELPERS
+//  RESPONSE HELPERS
 // ════════════════════════════════
 function ok(data) {
   return ContentService
@@ -55,19 +51,11 @@ function err(msg) {
     .createTextOutput(JSON.stringify({ ok: false, error: msg }))
     .setMimeType(ContentService.MimeType.JSON);
 }
-
-// Handle preflight OPTIONS requests (CORS)
-function doOptions(e) {
-  return ContentService
-    .createTextOutput('')
-    .setMimeType(ContentService.MimeType.TEXT);
-}
 function getSheet(name) {
   const ss = SpreadsheetApp.openById(SHEET_ID);
   let sheet = ss.getSheetByName(name);
   if (!sheet) {
     sheet = ss.insertSheet(name);
-    // Write headers
     const headers = name === MENU_TAB ? MENU_COLS : ORDER_COLS;
     sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
     sheet.getRange(1, 1, 1, headers.length)
@@ -79,7 +67,6 @@ function getSheet(name) {
 function sheetToObjects(sheet, cols) {
   const data = sheet.getDataRange().getValues();
   if (data.length <= 1) return [];
-  const headers = data[0];
   return data.slice(1).map(row => {
     const obj = {};
     cols.forEach((col, i) => obj[col] = row[i] !== undefined ? row[i] : '');
@@ -100,7 +87,7 @@ function objectToRow(obj, cols) {
 // ════════════════════════════════
 function getMenu() {
   const sheet = getSheet(MENU_TAB);
-  const rows = sheetToObjects(sheet, MENU_COLS);
+  const rows  = sheetToObjects(sheet, MENU_COLS);
   return rows.map(r => ({
     id:        Number(r.id),
     name:      r.name,
@@ -117,9 +104,7 @@ function getMenu() {
 
 function saveMenuItem(item) {
   const sheet = getSheet(MENU_TAB);
-  const rows = sheet.getDataRange().getValues();
-
-  // Find existing row by id (skip header row)
+  const rows  = sheet.getDataRange().getValues();
   for (let i = 1; i < rows.length; i++) {
     if (String(rows[i][0]) === String(item.id)) {
       sheet.getRange(i + 1, 1, 1, MENU_COLS.length)
@@ -127,7 +112,6 @@ function saveMenuItem(item) {
       return { action: 'updated', id: item.id };
     }
   }
-  // New item — assign ID if missing
   if (!item.id) {
     const ids = rows.slice(1).map(r => Number(r[0])).filter(Boolean);
     item.id = ids.length ? Math.max(...ids) + 1 : 1;
@@ -138,7 +122,7 @@ function saveMenuItem(item) {
 
 function deleteMenuItem(id) {
   const sheet = getSheet(MENU_TAB);
-  const rows = sheet.getDataRange().getValues();
+  const rows  = sheet.getDataRange().getValues();
   for (let i = 1; i < rows.length; i++) {
     if (String(rows[i][0]) === String(id)) {
       sheet.deleteRow(i + 1);
@@ -148,24 +132,12 @@ function deleteMenuItem(id) {
   return { notFound: id };
 }
 
-function saveMenu(menuArray) {
-  // Full menu overwrite (used for bulk import)
-  const sheet = getSheet(MENU_TAB);
-  const lastRow = sheet.getLastRow();
-  if (lastRow > 1) sheet.deleteRows(2, lastRow - 1);
-  if (menuArray.length) {
-    sheet.getRange(2, 1, menuArray.length, MENU_COLS.length)
-      .setValues(menuArray.map(item => objectToRow(item, MENU_COLS)));
-  }
-  return { saved: menuArray.length };
-}
-
 // ════════════════════════════════
 //  ORDERS
 // ════════════════════════════════
 function getOrders() {
   const sheet = getSheet(ORDERS_TAB);
-  const rows = sheetToObjects(sheet, ORDER_COLS);
+  const rows  = sheetToObjects(sheet, ORDER_COLS);
   return rows.map(r => ({
     ...r,
     total: Number(r.total),
@@ -174,34 +146,23 @@ function getOrders() {
 }
 
 function placeOrder(order) {
-  const sheet = getSheet(ORDERS_TAB);
+  const sheet    = getSheet(ORDERS_TAB);
   order.placedAt = new Date().toISOString();
   order.status   = order.status || 'New';
-  // Serialize items array to JSON string for storage
-  const row = objectToRow({
-    ...order,
-    items: JSON.stringify(order.items)
-  }, ORDER_COLS);
-  sheet.appendRow(row);
-
-  // Email notification to admin
+  sheet.appendRow(objectToRow({ ...order, items: JSON.stringify(order.items) }, ORDER_COLS));
   try {
     MailApp.sendEmail({
-      to: Session.getEffectiveUser().getEmail(),
-      subject: `🍽️ New Order #${order.id} from ${order.name} — A's Kitchen`,
+      to:       Session.getEffectiveUser().getEmail(),
+      subject:  `🍽️ New Order #${order.id} from ${order.name} — A's Kitchen`,
       htmlBody: buildOrderEmail(order)
     });
-  } catch(e) {
-    // Email failed — order still saved
-    console.log('Email failed:', e);
-  }
-
+  } catch(e) { console.log('Email failed:', e); }
   return { saved: true, id: order.id };
 }
 
 function updateOrder(id, status) {
-  const sheet = getSheet(ORDERS_TAB);
-  const rows = sheet.getDataRange().getValues();
+  const sheet     = getSheet(ORDERS_TAB);
+  const rows      = sheet.getDataRange().getValues();
   const statusCol = ORDER_COLS.indexOf('status') + 1;
   for (let i = 1; i < rows.length; i++) {
     if (String(rows[i][0]) === String(id)) {
@@ -214,7 +175,7 @@ function updateOrder(id, status) {
 
 function deleteOrder(id) {
   const sheet = getSheet(ORDERS_TAB);
-  const rows = sheet.getDataRange().getValues();
+  const rows  = sheet.getDataRange().getValues();
   for (let i = 1; i < rows.length; i++) {
     if (String(rows[i][0]) === String(id)) {
       sheet.deleteRow(i + 1);
