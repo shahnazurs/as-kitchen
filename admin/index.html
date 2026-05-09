@@ -480,6 +480,20 @@ function jsonp(params) {
   });
 }
 
+  // Retry up to 3 times with 2 second gap between attempts
+async function jsonpWithRetry(params, retries = 3) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await jsonp(params);
+    } catch(e) {
+      const isLast = i === retries - 1;
+      if (isLast) throw e;
+      console.warn(`Request failed (attempt ${i+1}/${retries}), retrying in 2s...`, e.message);
+      await new Promise(r => setTimeout(r, 2000));
+    }
+  }
+}
+
 function apiGet(action) {
   return jsonp({ action });
 }
@@ -491,7 +505,7 @@ function apiPost(body) {
   if (cleaned.item && cleaned.item.image && cleaned.item.image.startsWith('data:')) {
     console.warn('Large image detected — consider using images/ folder path instead of uploading');
   }
-  return jsonp({ action, payload: JSON.stringify({ action, ...rest }) });
+  return jsonpWithRetry({ action, payload: JSON.stringify({ action, ...rest }) });
 }
 // ════════════════════════════════
 //  AUTH
