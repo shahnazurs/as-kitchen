@@ -237,7 +237,7 @@
       <div class="cb-icon">⚙️</div>
       <div>
         <h3>Google Sheets Setup Required</h3>
-        <p>Open <code>admin/index.html</code> and <code>index.html</code>, find <code>https://script.google.com/macros/s/AKfycbxch3BPMWCJ9ssuheMaknPNaTAoULh1j47lek9WqVl8nUuYnVXe81qaLYGypDb6sA92/exec</code> and replace it with your deployed Apps Script Web App URL.<br/>
+        <p>Open <code>admin/index.html</code> and <code>index.html</code>, find <code>https://script.google.com/macros/s/AKfycbzHfl__dztld9evWHSbLmeq-k2I90C5-HAV7FBWKUyNGOKpKz76AL9up3f28YpllH0/exec</code> and replace it with your deployed Apps Script Web App URL.<br/>
         See <code>google-apps-script/SETUP.md</code> for step-by-step instructions.</p>
       </div>
     </div>
@@ -362,7 +362,7 @@
 
 <script>
 // ── API via JSONP ──
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxch3BPMWCJ9ssuheMaknPNaTAoULh1j47lek9WqVl8nUuYnVXe81qaLYGypDb6sA92/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzHfl__dztld9evWHSbLmeq-k2I90C5-HAV7FBWKUyNGOKpKz76AL9up3f28YpllH0/exec';
 
 function jsonp(params) {
   return new Promise((resolve, reject) => {
@@ -662,7 +662,7 @@ function renderMM() {
   g.innerHTML = items.map(it => `
     <div class="mc ${it.available===false||it.available==='false'?'unavail':''}">
       <div class="mc-img" style="background:${CBG[it.cat]||'#333'}">
-        ${it.image ? `<img src="${it.image}" alt="${it.name}" onerror="this.style.display='none'"/>` : ''}
+        ${it.image ? `<img src="${adminImgSrc(it.image)}" alt="${it.name}" onerror="this.style.display='none'"/>` : ''}
         <span class="mc-emoji">${it.image ? '' : (it.emoji||'🍽️')}</span>
         <span class="avbadge ${it.available!==false&&it.available!=='false'?'av-yes':'av-no'}">${it.available!==false&&it.available!=='false'?'✅ Available':'⏸ Hidden'}</span>
       </div>
@@ -702,7 +702,7 @@ function openMI(id) {
     // Image
     const isPath = it.image && !it.image.startsWith('data:');
     document.getElementById('miImgPath').value = isPath ? it.image.replace('../images/','') : '';
-    setImgPreview(it.image||null);
+    setImgPreview(it.image ? adminImgSrc(it.image) : null);
   } else {
     ['miN','miD','miP','miImgPath'].forEach(i=>document.getElementById(i).value='');
     document.getElementById('miE').value='🍽️';
@@ -796,6 +796,15 @@ async function delMI(id, btn) {
 }
 
 // ── IMAGE HELPERS ──
+// Admin is at /admin/ so relative paths need ../ prefix
+function adminImgSrc(img) {
+  if (!img) return '';
+  if (img.startsWith('data:')) return img;           // base64 — use as-is
+  if (img.startsWith('http')) return img;            // absolute URL — use as-is
+  if (img.startsWith('../')) return img;             // already corrected
+  if (img.startsWith('images/')) return '../' + img; // e.g. images/foo.jpg → ../images/foo.jpg
+  return '../images/' + img.replace(/^.*[\/]/, ''); // bare filename → ../images/filename
+}
 function handleImgFile(e) {
   const file = e.target.files[0]; if(!file) return;
   if (file.size > 5*1024*1024) { toast('Image too large — max 5MB','error'); return; }
