@@ -237,7 +237,7 @@
       <div class="cb-icon">⚙️</div>
       <div>
         <h3>Google Sheets Setup Required</h3>
-        <p>Open <code>admin/index.html</code> and <code>index.html</code>, find <code>https://script.google.com/macros/s/AKfycbxU0-CgibXmqTfBcBOOtsoeE5cBazTyFGQ028RZoQmtU-2IIrZjmJ59p26fs2RXu4g/exec</code> and replace it with your deployed Apps Script Web App URL.<br/>
+        <p>Open <code>admin/index.html</code> and <code>index.html</code>, find <code>https://script.google.com/macros/s/AKfycbzHfl__dztld9evWHSbLmeq-k2I90C5-HAV7FBWKUyNGOKpKz76AL9up3f28YpllH0/exec</code> and replace it with your deployed Apps Script Web App URL.<br/>
         See <code>google-apps-script/SETUP.md</code> for step-by-step instructions.</p>
       </div>
     </div>
@@ -364,7 +364,7 @@
 // ════════════════════════════════
 //  CONFIG — replace this URL after deploying your Apps Script
 // ════════════════════════════════
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxU0-CgibXmqTfBcBOOtsoeE5cBazTyFGQ028RZoQmtU-2IIrZjmJ59p26fs2RXu4g/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzHfl__dztld9evWHSbLmeq-k2I90C5-HAV7FBWKUyNGOKpKz76AL9up3f28YpllH0/exec';
 
 // ════════════════════════════════
 //  API
@@ -423,7 +423,7 @@ if (sessionStorage.getItem('aksA')) {
 // ════════════════════════════════
 function checkConfig() {
   const banner = document.getElementById('configBanner');
-  if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbxU0-CgibXmqTfBcBOOtsoeE5cBazTyFGQ028RZoQmtU-2IIrZjmJ59p26fs2RXu4g/exec') {
+  if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbzHfl__dztld9evWHSbLmeq-k2I90C5-HAV7FBWKUyNGOKpKz76AL9up3f28YpllH0/exec') {
     banner.style.display = 'flex';
   } else {
     banner.classList.add('ok');
