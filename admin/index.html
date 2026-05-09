@@ -237,7 +237,7 @@
       <div class="cb-icon">⚙️</div>
       <div>
         <h3>Google Sheets Setup Required</h3>
-        <p>Open <code>admin/index.html</code> and <code>index.html</code>, find <code>https://script.google.com/macros/s/AKfycbxch3BPMWCJ9ssuheMaknPNaTAoULh1j47lek9WqVl8nUuYnVXe81qaLYGypDb6sA92/exec</code> and replace it with your deployed Apps Script Web App URL.<br/>
+        <p>Open <code>admin/index.html</code> and <code>index.html</code>, find <code>https://script.google.com/macros/s/AKfycbzHfl__dztld9evWHSbLmeq-k2I90C5-HAV7FBWKUyNGOKpKz76AL9up3f28YpllH0/exec</code> and replace it with your deployed Apps Script Web App URL.<br/>
         See <code>google-apps-script/SETUP.md</code> for step-by-step instructions.</p>
       </div>
     </div>
@@ -362,25 +362,56 @@
 
 <script>
 // ── API via JSONP ──
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxch3BPMWCJ9ssuheMaknPNaTAoULh1j47lek9WqVl8nUuYnVXe81qaLYGypDb6sA92/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzHfl__dztld9evWHSbLmeq-k2I90C5-HAV7FBWKUyNGOKpKz76AL9up3f28YpllH0/exec';
 
-function jsonp(url) {
+function jsonp(params) {
   return new Promise((resolve, reject) => {
     const cb = 'cb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
     const script = document.createElement('script');
-    const timeout = setTimeout(() => { cleanup(); reject(new Error('Timeout')); }, 15000);
-    function cleanup() { delete window[cb]; if(script.parentNode) document.body.removeChild(script); clearTimeout(timeout); }
-    window[cb] = function(data) { cleanup(); if(data.ok) resolve(data.data); else reject(new Error(data.error)); };
-    script.onerror = () => { cleanup(); reject(new Error('Network error')); };
-    script.src = url + (url.includes('?') ? '&' : '?') + 'callback=' + cb + '&t=' + Date.now();
+    let settled = false;
+
+    const timeout = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      delete window[cb];
+      if (script.parentNode) document.body.removeChild(script);
+      reject(new Error('Timeout — Apps Script took too long. Try refreshing.'));
+    }, 25000);
+
+    window[cb] = function(data) {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeout);
+      delete window[cb];
+      if (script.parentNode) document.body.removeChild(script);
+      if (data.ok) resolve(data.data);
+      else reject(new Error(data.error));
+    };
+
+    // Don't reject on onerror — Google redirects trigger it falsely.
+    // The timeout above handles genuine failures.
+    script.onerror = () => { /* ignore — timeout handles real failures */ };
+
+    const qs = Object.entries({ ...params, callback: cb, t: Date.now() })
+      .map(([k,v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v))
+      .join('&');
+    script.src = SCRIPT_URL + '?' + qs;
     document.body.appendChild(script);
   });
 }
+
 function apiGet(action) {
-  return jsonp(SCRIPT_URL + '?action=' + encodeURIComponent(action));
+  return jsonp({ action });
 }
+
 function apiPost(body) {
-  return jsonp(SCRIPT_URL + '?action=' + encodeURIComponent(body.action) + '&payload=' + encodeURIComponent(JSON.stringify(body)));
+  const { action, ...rest } = body;
+  // Strip base64 images from payload — store path only to keep URL short
+  const cleaned = JSON.parse(JSON.stringify(rest));
+  if (cleaned.item && cleaned.item.image && cleaned.item.image.startsWith('data:')) {
+    console.warn('Large image detected — consider using images/ folder path instead of uploading');
+  }
+  return jsonp({ action, payload: JSON.stringify({ action, ...rest }) });
 }
 // ════════════════════════════════
 //  AUTH
@@ -422,7 +453,7 @@ if (sessionStorage.getItem('aksA')) {
 // ════════════════════════════════
 function checkConfig() {
   const banner = document.getElementById('configBanner');
-  if (!SCRIPT_URL || SCRIPT_URL.includes('https://script.google.com/macros/s/AKfycbxch3BPMWCJ9ssuheMaknPNaTAoULh1j47lek9WqVl8nUuYnVXe81qaLYGypDb6sA92/exec')) {
+  if (!SCRIPT_URL || SCRIPT_URL.includes('YOUR_APPS_SCRIPT')) {
     banner.style.display = 'flex';
   } else {
     banner.classList.add('ok');
@@ -475,7 +506,7 @@ async function loadOrders() {
   } catch(e) {
     console.error('Orders load failed:', e);
     document.getElementById('ordersLoading').innerHTML =
-      '<p style="color:var(--red)">⚠️ Could not load orders. Check your SCRIPT_URL configuration.</p>';
+      '<p style="color:var(--red)">⚠️ ' + (e.message||'Could not load orders') + '</p><button onclick="loadOrders()" style="margin-top:12px;padding:8px 20px;background:var(--spice);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:inherit">🔄 Retry</button>';
   }
 }
 
@@ -604,8 +635,11 @@ async function loadMenu() {
     ALL_MENU = await apiGet('getMenu');
     renderMM();
   } catch(e) {
+    console.error('loadMenu error:', e);
     document.getElementById('menuLoading').innerHTML =
-      '<p style="color:var(--red)">⚠️ Could not load menu. Check your SCRIPT_URL configuration.</p>';
+      '<p style="color:var(--red)">⚠️ ' + (e.message||'Could not load menu') + '</p>' +
+      '<p style="color:var(--muted);font-size:.8rem;margin-top:8px">Open browser console (F12) for details</p>' +
+      '<button onclick="loadMenu()" style="margin-top:12px;padding:8px 20px;background:var(--spice);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:inherit">🔄 Retry</button>';
   }
 }
 
