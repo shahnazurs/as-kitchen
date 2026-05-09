@@ -237,7 +237,7 @@
       <div class="cb-icon">⚙️</div>
       <div>
         <h3>Google Sheets Setup Required</h3>
-        <p>Open <code>admin/index.html</code> and <code>index.html</code>, find <code>https://script.google.com/macros/s/AKfycbxUize4bICnNFHDO1_ZG9sdgmXPpL9ovuExAUaL22BZGPSXosoVelvZ0-_DvZR_wFti/exec</code> and replace it with your deployed Apps Script Web App URL.<br/>
+        <p>Open <code>admin/index.html</code> and <code>index.html</code>, find <code>YOUR_APPS_SCRIPT_URL_HERE</code> and replace it with your deployed Apps Script Web App URL.<br/>
         See <code>google-apps-script/SETUP.md</code> for step-by-step instructions.</p>
       </div>
     </div>
@@ -364,25 +364,29 @@
 // ════════════════════════════════
 //  CONFIG — replace this URL after deploying your Apps Script
 // ════════════════════════════════
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxUize4bICnNFHDO1_ZG9sdgmXPpL9ovuExAUaL22BZGPSXosoVelvZ0-_DvZR_wFti/exec';
+const SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
 
 // ════════════════════════════════
 //  API
 // ════════════════════════════════
 async function apiGet(action) {
-  const res = await fetch(SCRIPT_URL + '?action=' + action);
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  const json = await res.json();
+  const res = await fetch(SCRIPT_URL + '?action=' + action, {
+    method: 'GET',
+    redirect: 'follow'
+  });
+  const text = await res.text();
+  const json = JSON.parse(text);
   if (!json.ok) throw new Error(json.error);
   return json.data;
 }
 async function apiPost(body) {
   const res = await fetch(SCRIPT_URL, {
     method: 'POST',
+    redirect: 'follow',
     body: JSON.stringify(body)
   });
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  const json = await res.json();
+  const text = await res.text();
+  const json = JSON.parse(text);
   if (!json.ok) throw new Error(json.error);
   return json.data;
 }
@@ -419,7 +423,7 @@ if (sessionStorage.getItem('aksA')) {
 // ════════════════════════════════
 function checkConfig() {
   const banner = document.getElementById('configBanner');
-  if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbxUize4bICnNFHDO1_ZG9sdgmXPpL9ovuExAUaL22BZGPSXosoVelvZ0-_DvZR_wFti/exec') {
+  if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
     banner.style.display = 'flex';
   } else {
     banner.classList.add('ok');
