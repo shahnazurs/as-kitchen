@@ -362,7 +362,7 @@
 
 <script>
 // ── API via JSONP ──
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzHfl__dztld9evWHSbLmeq-k2I90C5-HAV7FBWKUyNGOKpKz76AL9up3f28YpllH0/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxch3BPMWCJ9ssuheMaknPNaTAoULh1j47lek9WqVl8nUuYnVXe81qaLYGypDb6sA92/exec';
 
 function jsonp(url) {
   return new Promise((resolve, reject) => {
@@ -399,7 +399,7 @@ if (sessionStorage.getItem('aksA')) {
 // ════════════════════════════════
 function checkConfig() {
   const banner = document.getElementById('configBanner');
-  if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbzHfl__dztld9evWHSbLmeq-k2I90C5-HAV7FBWKUyNGOKpKz76AL9up3f28YpllH0/exec') {
+  if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbxch3BPMWCJ9ssuheMaknPNaTAoULh1j47lek9WqVl8nUuYnVXe81qaLYGypDb6sA92/exec') {
     banner.style.display = 'flex';
   } else {
     banner.classList.add('ok');
