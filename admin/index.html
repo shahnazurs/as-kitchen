@@ -203,7 +203,8 @@
       .stats-row{grid-template-columns:1fr 1fr;}
       .admin-body{padding:16px;}
       /* Hide desktop table on mobile */
-      .orders-wrap table, .orders-wrap thead { display:none; }
+      .orders-wrap table, .orders-wrap thead { display:none !important; }
+      #ordersTable{ display:none !important; }
       /* Show card list instead */
       .order-cards { display:flex !important; flex-direction:column; gap:12px; padding:12px; }
       .order-card {
