@@ -361,50 +361,26 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ════════════════════════════════
-//  CONFIG — replace this URL after deploying your Apps Script
-// ════════════════════════════════
+// ── API via JSONP ──
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzHfl__dztld9evWHSbLmeq-k2I90C5-HAV7FBWKUyNGOKpKz76AL9up3f28YpllH0/exec';
 
-// ════════════════════════════════
-//  API
-// ════════════════════════════════
-async function apiGet(action) {
-  const res = await fetch(SCRIPT_URL + '?action=' + action, {
-    method: 'GET',
-    redirect: 'follow'
+function jsonp(url) {
+  return new Promise((resolve, reject) => {
+    const cb = 'cb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+    const script = document.createElement('script');
+    const timeout = setTimeout(() => { cleanup(); reject(new Error('Timeout')); }, 15000);
+    function cleanup() { delete window[cb]; if(script.parentNode) document.body.removeChild(script); clearTimeout(timeout); }
+    window[cb] = function(data) { cleanup(); if(data.ok) resolve(data.data); else reject(new Error(data.error)); };
+    script.onerror = () => { cleanup(); reject(new Error('Network error')); };
+    script.src = url + (url.includes('?') ? '&' : '?') + 'callback=' + cb + '&t=' + Date.now();
+    document.body.appendChild(script);
   });
-  const text = await res.text();
-  const json = JSON.parse(text);
-  if (!json.ok) throw new Error(json.error);
-  return json.data;
 }
-async function apiPost(body) {
-  const res = await fetch(SCRIPT_URL, {
-    method: 'POST',
-    redirect: 'follow',
-    body: JSON.stringify(body)
-  });
-  const text = await res.text();
-  const json = JSON.parse(text);
-  if (!json.ok) throw new Error(json.error);
-  return json.data;
+function apiGet(action) {
+  return jsonp(SCRIPT_URL + '?action=' + encodeURIComponent(action));
 }
-
-// ════════════════════════════════
-//  AUTH
-// ════════════════════════════════
-const PWD = 'admin123';
-function doLogin() {
-  if (document.getElementById('loginPwd').value === PWD) {
-    sessionStorage.setItem('aksA','1');
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('adminScreen').style.display = 'block';
-    checkConfig();
-    loadAll();
-  } else {
-    document.getElementById('loginError').style.display = 'block';
-  }
+function apiPost(body) {
+  return jsonp(SCRIPT_URL + '?action=' + encodeURIComponent(body.action) + '&payload=' + encodeURIComponent(JSON.stringify(body)));
 }
 function doLogout() {
   sessionStorage.removeItem('aksA');
