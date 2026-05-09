@@ -195,7 +195,48 @@
     @media(max-width:900px){
       .stats-row{grid-template-columns:1fr 1fr;}
       .admin-body{padding:16px;}
-      .nav-tabs{display:none;}
+      /* Mobile nav — move tabs to bottom bar */
+      .nav-tabs{ display:none; }
+      .mobile-tabs{
+        display:flex;
+        position:fixed;
+        bottom:0; left:0; right:0;
+        background:var(--dark);
+        border-top:1px solid rgba(255,255,255,.1);
+        z-index:200;
+        padding:8px 16px 12px;
+        gap:8px;
+      }
+      .mobile-tab-btn{
+        flex:1;
+        background:transparent;
+        border:1px solid rgba(255,255,255,.2);
+        color:rgba(255,255,255,.6);
+        padding:10px 8px;
+        border-radius:10px;
+        cursor:pointer;
+        font-family:'DM Sans',sans-serif;
+        font-size:.82rem;
+        font-weight:500;
+        transition:all .2s;
+        text-align:center;
+        line-height:1.3;
+      }
+      .mobile-tab-btn.active{
+        background:var(--spice);
+        border-color:var(--spice);
+        color:#fff;
+        font-weight:600;
+      }
+      /* Push content up so bottom bar doesn't cover it */
+      .admin-body{ padding-bottom:90px; }
+      /* Shrink nav on mobile */
+      .admin-nav{ padding:0 16px; height:56px; }
+      .nav-right a{ display:none; }
+      .nav-badge{ font-size:.7rem; padding:3px 8px; }
+    }
+    @media(min-width:901px){
+      .mobile-tabs{ display:none; }
     }
   </style>
 </head>
@@ -230,6 +271,16 @@
     </div>
   </nav>
 
+  <!-- MOBILE BOTTOM TAB BAR -->
+  <div class="mobile-tabs">
+    <button class="mobile-tab-btn active" id="mobBtnOrders" onclick="showTab('orders')">
+      📋<br/>Orders
+    </button>
+    <button class="mobile-tab-btn" id="mobBtnMenu" onclick="showTab('menu')">
+      🍽️<br/>Menu
+    </button>
+  </div>
+
   <div class="admin-body">
 
     <!-- CONFIG BANNER -->
@@ -237,7 +288,7 @@
       <div class="cb-icon">⚙️</div>
       <div>
         <h3>Google Sheets Setup Required</h3>
-        <p>Open <code>admin/index.html</code> and <code>index.html</code>, find <code>https://script.google.com/macros/s/AKfycbxch3BPMWCJ9ssuheMaknPNaTAoULh1j47lek9WqVl8nUuYnVXe81qaLYGypDb6sA92/exec</code> and replace it with your deployed Apps Script Web App URL.<br/>
+        <p>Open <code>admin/index.html</code> and <code>index.html</code>, find <code>https://script.google.com/macros/s/AKfycbzHfl__dztld9evWHSbLmeq-k2I90C5-HAV7FBWKUyNGOKpKz76AL9up3f28YpllH0/exec</code> and replace it with your deployed Apps Script Web App URL.<br/>
         See <code>google-apps-script/SETUP.md</code> for step-by-step instructions.</p>
       </div>
     </div>
@@ -362,7 +413,7 @@
 
 <script>
 // ── API via JSONP ──
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxch3BPMWCJ9ssuheMaknPNaTAoULh1j47lek9WqVl8nUuYnVXe81qaLYGypDb6sA92/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzHfl__dztld9evWHSbLmeq-k2I90C5-HAV7FBWKUyNGOKpKz76AL9up3f28YpllH0/exec';
 
 function jsonp(params) {
   return new Promise((resolve, reject) => {
@@ -453,7 +504,7 @@ if (sessionStorage.getItem('aksA')) {
 // ════════════════════════════════
 function checkConfig() {
   const banner = document.getElementById('configBanner');
-  if (!SCRIPT_URL || SCRIPT_URL.includes('https://script.google.com/macros/s/AKfycbxch3BPMWCJ9ssuheMaknPNaTAoULh1j47lek9WqVl8nUuYnVXe81qaLYGypDb6sA92/exec')) {
+  if (!SCRIPT_URL || SCRIPT_URL.includes('YOUR_APPS_SCRIPT')) {
     banner.style.display = 'flex';
   } else {
     banner.classList.add('ok');
@@ -467,9 +518,15 @@ function checkConfig() {
 function showTab(t) {
   document.getElementById('pOrders').style.display = t==='orders' ? 'block' : 'none';
   document.getElementById('pMenu').style.display   = t==='menu'   ? 'block' : 'none';
+  // Desktop tabs
   document.getElementById('tbOrders').classList.toggle('active', t==='orders');
   document.getElementById('tbMenu').classList.toggle('active',   t==='menu');
-  if (t==='menu') loadMenu();
+  // Mobile bottom tabs
+  document.getElementById('mobBtnOrders').classList.toggle('active', t==='orders');
+  document.getElementById('mobBtnMenu').classList.toggle('active',   t==='menu');
+  window.scrollTo(0, 0);
+  if (t==='menu')   loadMenu();
+  if (t==='orders') loadAll();
 }
 
 async function refreshAll() {
