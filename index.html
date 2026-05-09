@@ -861,27 +861,40 @@
 </div>
 
 <script>
-// ── MENU DATA ──
-// Load menu from admin panel (localStorage) — falls back to defaults if none saved
-const DEFAULT_MENU = [
-  { id:1,  name:"Chicken Biryani",      desc:"Aromatic basmati rice layered with spiced chicken and caramelised onions", price:14.99, emoji:"🍛", cat:"rice",    tag:"non-veg", available:true, image:"images/Chicken-Biryani.jpg" },
-  { id:2,  name:"Lamb Curry",           desc:"Slow-cooked lamb in a rich, deeply spiced masala gravy",                    price:13.99, emoji:"🍖", cat:"mains",  tag:"non-veg", available:true, image:"images/lamb-curry.svg" },
-  { id:3,  name:"Paneer Butter Masala", desc:"Cottage cheese cubes in a velvety tomato-cream sauce",                      price:11.99, emoji:"🧀", cat:"mains",  tag:"veg",     available:true, image:"images/paneer-butter-masala.svg" },
-  { id:4,  name:"Dal Tadka",            desc:"Yellow lentils tempered with cumin, garlic, and dried chillies",             price:8.99,  emoji:"🫕", cat:"sides",  tag:"veg",     available:false, image:"images/dal-tadka.svg" },
-  { id:5,  name:"Vegetable Biryani",    desc:"Fragrant basmati with seasonal vegetables and whole spices",                 price:11.99, emoji:"🥘", cat:"rice",   tag:"veg",     available:true, image:"images/vegetable-biryani.svg" },
-  { id:6,  name:"Chicken Curry",        desc:"Classic home-style chicken curry with fresh ground masala",                  price:12.99, emoji:"🍲", cat:"mains",  tag:"non-veg", spicy:true, available:true, image:"images/chicken-curry.svg" },
-  { id:7,  name:"Gulab Jamun",          desc:"Soft milk dumplings soaked in rose-cardamom sugar syrup (6 pieces)",         price:5.99,  emoji:"🍮", cat:"desserts",tag:"veg",     available:false, image:"images/gulab-jamun.svg" },
-  { id:8,  name:"Kheer",               desc:"Creamy rice pudding slow-cooked with saffron, cardamom and pistachios",      price:4.99,  emoji:"🍚", cat:"desserts",tag:"veg",     available:true, image:"images/kheer.svg" },
-  { id:9,  name:"Raita",               desc:"Cooling yoghurt with cucumber, mint and a hint of cumin",                   price:3.99,  emoji:"🥣", cat:"sides",  tag:"veg",     available:true, image:"images/raita.svg" },
-  { id:10, name:"Garlic Naan",          desc:"Soft flatbread brushed with garlic butter (2 pieces)",                       price:3.49,  emoji:"🫓", cat:"sides",  tag:"veg",     available:true, image:"images/garlic-naan.svg" },
-  { id:11, name:"Fish Curry",           desc:"Coastal-style fish curry with coconut milk and tangy kokum",                 price:13.99, emoji:"🐟", cat:"mains",  tag:"non-veg", spicy:true, available:true, image:"images/fish-curry.svg" },
-  { id:12, name:"Halwa",               desc:"Semolina pudding with ghee, cashews and saffron",                            price:4.49,  emoji:"🍯", cat:"desserts",tag:"veg",     available:false, image:"images/halwa.svg" },
-  { id:13, name:"Nasi Goreng",               desc:"Nasi Goreng is the popular Malaysian fried rice which is traditionally served with a fried egg",                            price:9.49,  emoji:"🍯", cat:"mains",tag:"non-veg",     available:true, image:"images/nasi-goreng.png" },
-];
-// Always read fresh from localStorage so admin changes reflect immediately
-function getLiveMenu() {
-  const stored = localStorage.getItem('aksMenu');
-  return (stored ? JSON.parse(stored) : DEFAULT_MENU).filter(m => m.available !== false);
+// ── GOOGLE SHEETS CONFIG ──
+const SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE'; // ← replace after deploying Apps Script
+
+// ── API ──
+async function apiGet(action) {
+  const res = await fetch(SCRIPT_URL + '?action=' + action);
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.error);
+  return json.data;
+}
+async function apiPost(body) {
+  const res = await fetch(SCRIPT_URL, { method:'POST', body:JSON.stringify(body) });
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.error);
+  return json.data;
+}
+
+// ── Menu cache ──
+let MENU_CACHE = [];
+function getLiveMenu() { return MENU_CACHE.filter(m => m.available !== false); }
+
+async function loadMenuFromSheets() {
+  document.getElementById('menuGrid').innerHTML =
+    '<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted)">🍳 Loading menu…</div>';
+  try {
+    MENU_CACHE = await apiGet('getMenu');
+  } catch(e) {
+    console.error('Menu load failed:', e);
+    document.getElementById('menuGrid').innerHTML =
+      '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)">⚠️ Could not load menu. Please refresh the page.</div>';
+    return;
+  }
+  renderMenu();
+  renderCheckboxes();
 }
 
 let selectedItems = {};
@@ -989,7 +1002,7 @@ function isThreeHoursAhead(dateStr, timeStr) {
 }
 
 // ── SUBMIT ──
-function submitOrder() {
+async function submitOrder() {
   const name    = document.getElementById('custName').value.trim();
   const phone   = document.getElementById('custPhone').value.trim();
   const email   = document.getElementById('custEmail').value.trim();
@@ -1025,19 +1038,27 @@ function submitOrder() {
     placedAt: new Date().toISOString()
   };
 
-  // Save to localStorage
-  const orders = JSON.parse(localStorage.getItem('aksOrders') || '[]');
-  orders.push(order);
-  localStorage.setItem('aksOrders', JSON.stringify(orders));
+  // Disable button while saving
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Placing order…';
 
-  document.getElementById('orderRefDisplay').textContent = `Order #${order.id}`;
-  document.getElementById('successModal').classList.add('show');
-
-  // Reset form
-  ['custName','custPhone','custEmail','custAddress','orderDate','orderTime','custNotes'].forEach(id => document.getElementById(id).value = '');
-  selectedItems = {};
-  renderCheckboxes();
-  updateTotal();
+  try {
+    await apiPost({ action: 'placeOrder', order });
+    document.getElementById('orderRefDisplay').textContent = 'Order #' + order.id;
+    document.getElementById('successModal').classList.add('show');
+    // Reset form
+    ['custName','custPhone','custEmail','custAddress','orderDate','orderTime','custNotes'].forEach(id => document.getElementById(id).value = '');
+    selectedItems = {};
+    renderCheckboxes();
+    updateTotal();
+  } catch(e) {
+    alert('Sorry, there was a problem placing your order. Please try again.');
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Place Order 🍽️';
+  }
 }
 
 function closeModal() {
@@ -1045,20 +1066,8 @@ function closeModal() {
 }
 
 // ── INIT ──
-renderMenu();
-renderCheckboxes();
 initDatePicker();
-
-// Auto-refresh menu if admin changes it in another tab
-window.addEventListener('storage', e => {
-  if (e.key === 'aksMenu') {
-    selectedItems = {};          // reset cart — items may have changed
-    renderMenu();
-    renderCheckboxes();
-    updateTotal();
-  }
-});
+loadMenuFromSheets();
 </script>
-<script src="index.html?v=2"></script>
 </body>
 </html>
