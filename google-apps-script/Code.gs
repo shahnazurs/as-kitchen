@@ -1,10 +1,9 @@
 // ════════════════════════════════════════════════════════════
 //  A's Kitchen — Google Apps Script Backend
-//  Paste this entire file into script.google.com
 //  Deploy as Web App: Execute as "Me", Access "Anyone"
 // ════════════════════════════════════════════════════════════
 
-const SHEET_ID   = 'YOUR_GOOGLE_SHEET_ID_HERE'; // ← paste your Sheet ID
+const SHEET_ID   = '14cJHDFbsSACNXx18fsjKOyX30zwNS-REgbNnDDsY-G0';
 const MENU_TAB   = 'Menu';
 const ORDERS_TAB = 'Orders';
 
@@ -12,45 +11,47 @@ const MENU_COLS  = ['id','name','desc','price','emoji','cat','tag','spicy','avai
 const ORDER_COLS = ['id','name','email','phone','address','date','time','items','total','notes','status','placedAt'];
 
 // ════════════════════════════════
-//  SINGLE ROUTER — everything via GET
-//  Browser sends:  ?action=getMenu
-//  Browser sends:  ?action=saveMenuItem&payload={"name":...}
+//  ROUTER — supports JSONP via ?callback=
 // ════════════════════════════════
 function doGet(e) {
-  const action  = e.parameter.action;
-  const payload = e.parameter.payload ? JSON.parse(e.parameter.payload) : {};
+  const action   = e.parameter.action;
+  const callback = e.parameter.callback; // JSONP callback name
+  const payload  = e.parameter.payload ? JSON.parse(decodeURIComponent(e.parameter.payload)) : {};
 
+  let result;
   try {
-    // READ actions
-    if (action === 'getMenu')         return ok(getMenu());
-    if (action === 'getOrders')       return ok(getOrders());
-
-    // WRITE actions (payload passed as URL param)
-    if (action === 'saveMenuItem')    return ok(saveMenuItem(payload.item));
-    if (action === 'deleteMenuItem')  return ok(deleteMenuItem(payload.id));
-    if (action === 'placeOrder')      return ok(placeOrder(payload.order));
-    if (action === 'updateOrder')     return ok(updateOrder(payload.id, payload.status));
-    if (action === 'deleteOrder')     return ok(deleteOrder(payload.id));
-
-    return err('Unknown action: ' + action);
+    if (action === 'getMenu')        result = ok(getMenu());
+    else if (action === 'getOrders') result = ok(getOrders());
+    else if (action === 'saveMenuItem')   result = ok(saveMenuItem(payload.item));
+    else if (action === 'deleteMenuItem') result = ok(deleteMenuItem(payload.id));
+    else if (action === 'placeOrder')     result = ok(placeOrder(payload.order));
+    else if (action === 'updateOrder')    result = ok(updateOrder(payload.id, payload.status));
+    else if (action === 'deleteOrder')    result = ok(deleteOrder(payload.id));
+    else result = { ok: false, error: 'Unknown action: ' + action };
   } catch(ex) {
-    return err(ex.toString());
+    result = { ok: false, error: ex.toString() };
   }
+
+  const json = JSON.stringify(result);
+
+  // If JSONP requested, wrap in callback
+  if (callback) {
+    return ContentService
+      .createTextOutput(callback + '(' + json + ')')
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
+
+  return ContentService
+    .createTextOutput(json)
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
 // ════════════════════════════════
-//  RESPONSE HELPERS
+//  HELPERS
 // ════════════════════════════════
-function ok(data) {
-  return ContentService
-    .createTextOutput(JSON.stringify({ ok: true, data }))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-function err(msg) {
-  return ContentService
-    .createTextOutput(JSON.stringify({ ok: false, error: msg }))
-    .setMimeType(ContentService.MimeType.JSON);
-}
+function ok(data)  { return { ok: true,  data }; }
+function err(msg)  { return { ok: false, error: msg }; }
+
 function getSheet(name) {
   const ss = SpreadsheetApp.openById(SHEET_ID);
   let sheet = ss.getSheetByName(name);
@@ -64,6 +65,7 @@ function getSheet(name) {
   }
   return sheet;
 }
+
 function sheetToObjects(sheet, cols) {
   const data = sheet.getDataRange().getValues();
   if (data.length <= 1) return [];
@@ -73,6 +75,7 @@ function sheetToObjects(sheet, cols) {
     return obj;
   });
 }
+
 function objectToRow(obj, cols) {
   return cols.map(col => {
     const v = obj[col];
@@ -86,19 +89,18 @@ function objectToRow(obj, cols) {
 //  MENU
 // ════════════════════════════════
 function getMenu() {
-  const sheet = getSheet(MENU_TAB);
-  const rows  = sheetToObjects(sheet, MENU_COLS);
+  const rows = sheetToObjects(getSheet(MENU_TAB), MENU_COLS);
   return rows.map(r => ({
     id:        Number(r.id),
-    name:      r.name,
-    desc:      r.desc,
+    name:      String(r.name),
+    desc:      String(r.desc),
     price:     Number(r.price),
-    emoji:     r.emoji,
-    cat:       r.cat,
-    tag:       r.tag,
+    emoji:     String(r.emoji),
+    cat:       String(r.cat),
+    tag:       String(r.tag),
     spicy:     r.spicy === 'true' || r.spicy === true,
     available: r.available !== 'false' && r.available !== false,
-    image:     r.image || ''
+    image:     String(r.image || '')
   }));
 }
 
@@ -107,8 +109,7 @@ function saveMenuItem(item) {
   const rows  = sheet.getDataRange().getValues();
   for (let i = 1; i < rows.length; i++) {
     if (String(rows[i][0]) === String(item.id)) {
-      sheet.getRange(i + 1, 1, 1, MENU_COLS.length)
-        .setValues([objectToRow(item, MENU_COLS)]);
+      sheet.getRange(i + 1, 1, 1, MENU_COLS.length).setValues([objectToRow(item, MENU_COLS)]);
       return { action: 'updated', id: item.id };
     }
   }
@@ -136,8 +137,7 @@ function deleteMenuItem(id) {
 //  ORDERS
 // ════════════════════════════════
 function getOrders() {
-  const sheet = getSheet(ORDERS_TAB);
-  const rows  = sheetToObjects(sheet, ORDER_COLS);
+  const rows = sheetToObjects(getSheet(ORDERS_TAB), ORDER_COLS);
   return rows.map(r => ({
     ...r,
     total: Number(r.total),
@@ -148,12 +148,12 @@ function getOrders() {
 function placeOrder(order) {
   const sheet    = getSheet(ORDERS_TAB);
   order.placedAt = new Date().toISOString();
-  order.status   = order.status || 'New';
+  order.status   = 'New';
   sheet.appendRow(objectToRow({ ...order, items: JSON.stringify(order.items) }, ORDER_COLS));
   try {
     MailApp.sendEmail({
       to:       Session.getEffectiveUser().getEmail(),
-      subject:  `🍽️ New Order #${order.id} from ${order.name} — A's Kitchen`,
+      subject:  '🍽️ New Order #' + order.id + ' from ' + order.name + ' — A\'s Kitchen',
       htmlBody: buildOrderEmail(order)
     });
   } catch(e) { console.log('Email failed:', e); }
@@ -186,32 +186,26 @@ function deleteOrder(id) {
 }
 
 // ════════════════════════════════
-//  EMAIL TEMPLATE
+//  EMAIL
 // ════════════════════════════════
 function buildOrderEmail(order) {
   const items = (order.items || []).map(i =>
-    `<tr><td style="padding:6px 12px">${i.name}</td><td style="padding:6px 12px;text-align:right">$${Number(i.price).toFixed(2)}</td></tr>`
+    '<tr><td style="padding:6px 12px">' + i.name + '</td><td style="padding:6px 12px;text-align:right">$' + Number(i.price).toFixed(2) + '</td></tr>'
   ).join('');
-  return `
-  <div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#2A1810">
-    <div style="background:#1A0F08;padding:24px 32px;border-radius:12px 12px 0 0">
-      <h1 style="color:#fff;margin:0;font-size:1.4rem">🍽️ New Order — A's Kitchen</h1>
-    </div>
-    <div style="background:#fff;padding:28px 32px;border:1px solid #E8D5C0;border-top:none;border-radius:0 0 12px 12px">
-      <table style="width:100%;border-collapse:collapse;margin-bottom:20px">
-        <tr><td style="padding:6px 0;color:#7A5A48;font-size:.85rem">Order ID</td><td style="font-weight:700;color:#C8460A">#${order.id}</td></tr>
-        <tr><td style="padding:6px 0;color:#7A5A48;font-size:.85rem">Customer</td><td>${order.name}</td></tr>
-        <tr><td style="padding:6px 0;color:#7A5A48;font-size:.85rem">Email</td><td>${order.email}</td></tr>
-        <tr><td style="padding:6px 0;color:#7A5A48;font-size:.85rem">Phone</td><td>${order.phone}</td></tr>
-        <tr><td style="padding:6px 0;color:#7A5A48;font-size:.85rem">Address</td><td>${order.address}</td></tr>
-        <tr><td style="padding:6px 0;color:#7A5A48;font-size:.85rem">Delivery</td><td>${order.date} at ${order.time}</td></tr>
-      </table>
-      <table style="width:100%;border-collapse:collapse;background:#FAF6F0;border-radius:8px;overflow:hidden">
-        <tr style="background:#1A0F08;color:#fff"><th style="padding:8px 12px;text-align:left">Item</th><th style="padding:8px 12px;text-align:right">Price</th></tr>
-        ${items}
-        <tr style="border-top:2px solid #E8D5C0"><td style="padding:10px 12px;font-weight:700">Total</td><td style="padding:10px 12px;text-align:right;font-weight:700;color:#C8460A">$${Number(order.total).toFixed(2)}</td></tr>
-      </table>
-      ${order.notes ? `<div style="margin-top:16px;padding:12px;background:#FEF3E2;border-radius:8px"><strong>Notes:</strong> ${order.notes}</div>` : ''}
-    </div>
-  </div>`;
+  return '<div style="font-family:sans-serif;max-width:560px;margin:0 auto">'
+    + '<div style="background:#1A0F08;padding:24px 32px;border-radius:12px 12px 0 0"><h1 style="color:#fff;margin:0">🍽️ New Order — A\'s Kitchen</h1></div>'
+    + '<div style="background:#fff;padding:28px 32px;border:1px solid #E8D5C0;border-radius:0 0 12px 12px">'
+    + '<p><strong>Order:</strong> #' + order.id + '</p>'
+    + '<p><strong>Customer:</strong> ' + order.name + '</p>'
+    + '<p><strong>Email:</strong> ' + order.email + '</p>'
+    + '<p><strong>Phone:</strong> ' + order.phone + '</p>'
+    + '<p><strong>Address:</strong> ' + order.address + '</p>'
+    + '<p><strong>Delivery:</strong> ' + order.date + ' at ' + order.time + '</p>'
+    + '<table style="width:100%;border-collapse:collapse;margin-top:16px">'
+    + '<tr style="background:#1A0F08;color:#fff"><th style="padding:8px 12px;text-align:left">Item</th><th style="padding:8px 12px;text-align:right">Price</th></tr>'
+    + items
+    + '<tr><td style="padding:10px 12px;font-weight:700">Total</td><td style="padding:10px 12px;text-align:right;font-weight:700;color:#C8460A">$' + Number(order.total).toFixed(2) + '</td></tr>'
+    + '</table>'
+    + (order.notes ? '<p style="margin-top:16px"><strong>Notes:</strong> ' + order.notes + '</p>' : '')
+    + '</div></div>';
 }
