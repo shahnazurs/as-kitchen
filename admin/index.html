@@ -364,7 +364,7 @@
 // ════════════════════════════════
 //  CONFIG — replace this URL after deploying your Apps Script
 // ════════════════════════════════
-const SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxUize4bICnNFHDO1_ZG9sdgmXPpL9ovuExAUaL22BZGPSXosoVelvZ0-_DvZR_wFti/exec';
 
 // ════════════════════════════════
 //  API
@@ -419,7 +419,7 @@ if (sessionStorage.getItem('aksA')) {
 // ════════════════════════════════
 function checkConfig() {
   const banner = document.getElementById('configBanner');
-  if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+  if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbxUize4bICnNFHDO1_ZG9sdgmXPpL9ovuExAUaL22BZGPSXosoVelvZ0-_DvZR_wFti/exec') {
     banner.style.display = 'flex';
   } else {
     banner.classList.add('ok');
